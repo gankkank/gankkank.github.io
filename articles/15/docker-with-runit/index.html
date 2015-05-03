@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Docker with Runit</title>
+  <meta name="description" content="Though run only one process per container is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in...">
+
+
+  <link rel="stylesheet" href="/css/tufte.css">	
+  
+
+  <!-- Google Fonts loaded here -->
+  <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+
+  <!-- Load up MathJax script if needed ... specify in /_data/options.yml file-->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+  <link rel="canonical" href="https://gankkank.github.io/articles/15/docker-with-runit">
+  <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
+</head>
+
+  <body>
+    <!--- Header and nav template site-wide -->
+<header>
+    <nav class="group">
+		<a href="/"><img class="badge" src="https://s.gravatar.com/avatar/e1cb6d2b55c8fee4549383ac99ec53e1?s=80" alt="CH"></a>
+		<a href="/page">A Page</a>
+		<a href="/about">About</a>
+	</nav>
+</header>
+
+    <article>
+      <h1>Docker with runit</h1>
+<p>May 4, 2015</p>
+
+
+<p>Though <a href="https://docs.docker.com/articles/dockerfile_best-practices/">run only one process per container</a> is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in a development environment. Someone also ask Docker <a href="https://docs.docker.com/faq/">how do I run more than one process in a Docker container</a>, there are superviord, runit, s6, or daemontools, etc. we can choose.</p>
+
+<!--more-->
+
+<p>There are some debtes about whether we should use runit in docker, you can read if you are interested in this. <a href="https://github.com/phusion/baseimage-docker/issues/164">#164</a> and phusion explain why they use runit in <a href="http://phusion.github.io/baseimage-docker/">runit section</a></p>
+
+<p>I will choose Runit on the first try since I saw many developers are using it.</p>
+
+<p>As a Docker beginner, it&#39;s fantastic to migrate some web services in my KVM to Docker to follow the fashion in order to see whether I can take benefit from it. I will start with ssh before I migrate my web services.</p>
+
+<p>There is a good post from <a href="http://www.sourcediver.org/blog/2014/11/17/using-runit-in-a-docker-container/">sourcedirve.org</a>, which shows us how to use Runit in Docker. And you can also check docker <a href="https://phusion.github.io/baseimage-docker/">phusion</a> image.</p>
+
+<h2>Install</h2>
+
+<p>To install docker is quite straightforward:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">wget -qO- https://get.docker.com/ | sh
+</code></pre></div>
+<p>Then, To interactive with docker instance:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">docker run -i -t debian /bin/bash
+</code></pre></div>
+<p>The docker instance will exit after you hit the <code>exit</code> command. Docker also have commands to run a process as daemon but we will discuss how to use runit to launch ssh process. </p>
+
+<p>The officical doc about ssh can be found at <a href="https://docs.docker.com/examples/running_ssh_service/">running ssh service</a>. Some settings in the document is essential to get the SSH service running in docker instance.</p>
+
+<h2>Prepare Scripts</h2>
+
+<p>Runit run script to run ssh service, copy to <strong>/etc/service/sshd/run</strong> </p>
+<div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
+<span class="nb">exec </span>2&gt;&amp;1
+<span class="nb">exec</span> /usr/sbin/sshd -D -e
+</code></pre></div>
+<p>Script to start runit, copy to <strong>/usr/sbin/runsvdir-start</strong></p>
+<div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
+<span class="nb">export</span> &gt; /etc/envvars
+<span class="nb">exec</span> /usr/sbin/runsvdir-start
+</code></pre></div>
+<h2>Build Image with runit</h2>
+
+<p>Make sure &quot;./service/ssh/run&quot; and &quot;./runit_bootstrap&quot; exist in local directory.</p>
+<div class="highlight"><pre><code class="language-" data-lang="">#Dockerfile
+FROM debian:jessie
+
+#
+RUN apt-get update &amp;&amp; apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:screencast' | chpasswd
+RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Fix
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" &gt;&gt; /etc/profile
+
+# prepare script
+RUN mkdir -p /etc/service/ssh/
+COPY ./service/ssh/run /etc/service/ssh/run
+RUN chmod 755  /etc/service/ssh/run
+
+#install, config runit
+RUN touch /etc/inittab
+RUN apt-get update &amp;&amp; DEBIAN_FRONTEND=noninteractive apt-get install -y -q runit
+
+COPY runit_bootstrap /usr/sbin/runit_bootstrap
+RUN chmod 755 /usr/sbin/runit_bootstrap
+
+EXPOSE 22
+ENTRYPOINT ["/usr/sbin/runit_bootstrap"]
+</code></pre></div>
+<p>After all files are ready, we can start to build the images. You can use the following commands to tag image, start docker instance, and login to docker, etc.</p>
+<div class="highlight"><pre><code class="language-" data-lang=""># start to build
+docker build .
+# find ID of new build image
+docker images
+# tag the image
+docker tag 27bc398e8222 debian-runit:0.1
+
+#An ENTRYPOINT allows you to configure a container that will run as an executable.
+#So to run the image (-d deamon):
+docker run -d -P -t debian-runit:0.1
+
+# login to docker container
+docker exec -i -t &lt;ID&gt; bash
+# or:
+docker attach &lt;ID&gt;
+</code></pre></div>
+<p>After you launch the docker instance you build, your can use ssh to login. Root password should be the one in Dockerfile.</p>
+
+<p>If you need packages like <code>curl</code>, <code>psmisc</code>, please add by yourself in Dockerfile.</p>
+
+<p>Default docker will set the ID as it&#39;s hostname, to launch docker instance with a specific hostname, you can use <code>docker run -h debian-runit1 -d -P -t debian-runit:0.1</code>. For details please check <a href="https://docs.docker.com/articles/networking/">docker networking</a></p>
+
+<p>Hope this post can help you and I will discuss rsyslog later.</p>
+
+
+
+    </article>
+    <span class="print-footer">Docker with Runit - May 4, 2015 - jimmy yang</span>
+    <footer>
+  <ul class="footer-links group">
+      <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    
+    
+      <li>
+        <a href="//www.twitter.com/gankkank"><span class="icon-twitter"></span></a>
+      </li>
+    
+      <li>
+        <a href="//github.com/gankkank"><span class="icon-github"></span></a>
+      </li>
+    
+      <li>
+        <a href="/feed.xml"><span class="icon-feed"></span></a>
+      </li>
+      
+  </ul>
+<div class="credits">
+<span>&copy; 2015 &nbsp;&nbsp;JIMMY YANG</span></br> 
+<span>This site created with the <a href="//github.com/clayh53/tufte-jekyll">Tufte theme for gankkank </a> in <a href="//jekyllrb.com">Jekyll</a>.</span> 
+</div>  
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-52890177-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</footer>
+
+  </body>
+</html>

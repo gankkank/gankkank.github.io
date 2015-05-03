@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>About</title>
+  <title>Tufte</title>
   <meta name="description" content="IT blogs about DEVOPS, ruby, chef and open source tools like redmine, docker, gitlab, KVM and cloud services like AWS. Through as a RHCE, I work mostly with Ubuntu. ^_^
 ">
 
@@ -21,7 +21,7 @@
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
-  <link rel="canonical" href="https://gankkank.github.io/about/">
+  <link rel="canonical" href="https://gankkank.github.io/.tufte">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
 </head>
 
@@ -36,20 +36,33 @@
 </header>
 
     <article>
-      <h1>About</h1>
-<p></p>
+        <h1 class="content-listing-header sans">Articles</h1>
+  <ul class="content">
+    
+      <li class="listing">
+      	<hr class="slender">
+      	<a href="/articles/15/docker-with-runit"><h4 class="contrast">Docker with Runit</h4></a>
+      	<span class="smaller">May 4, 2015</span>  <br/>
+		<div><p>Though <a href="https://docs.docker.com/articles/dockerfile_best-practices/">run only one process per container</a> is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in a development environment. Someone also ask Docker <a href="https://docs.docker.com/faq/">how do I run more than one process in a Docker container</a>, there are superviord, runit, s6, or daemontools, etc. we can choose.</p>
+</div>
+		
+      </li>
+    
+      <li class="listing">
+      	<hr class="slender">
+      	<a href="/articles/15/get-start-with-jekyll"><h4 class="contrast">Get start with Jekyll and Github Pages !!</h4></a>
+      	<span class="smaller">May 2, 2015</span>  <br/>
+		<div><p>Oh, yeah, I decide to get start to write some technical posts with jekyll in github pages.</p>
 
-
-<p>The <em>Tufte-Jekyll</em> theme is a natural extension of the work done by <a href="https://github.com/daveliepmann/tufte-css">Dave Leipmann</a> on Github that created a CSS file that allows web writers to use the simple and elegant style employed by Edward Tufte in his published materials.</p>
-
-<p>To incorporate these styles into a Jekyll theme, I have made some very slight modifications that attempt to maintain the feel of the CSS styles in this repo.</p>
-
-<p>You can find the source code for Jekyll at <a href="https://github.com/jekyll/jekyll">github.com/jekyll/jekyll</a></p>
-
-
+<p>I would like to share with you how I get start and will update later when I find out some awesome tips!</p>
+</div>
+		
+      </li>
+    
+  </ul>
 
     </article>
-    <span class="print-footer">About - jimmy yang</span>
+    <span class="print-footer">Tufte - jimmy yang</span>
     <footer>
   <ul class="footer-links group">
       <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    

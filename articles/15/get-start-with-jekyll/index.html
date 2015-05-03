@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Get start with Jekyll and Github Pages !!</title>
+  <meta name="description" content="Oh, yeah, I decide to get start to write some technical posts with jekyll in github pages.I would like to share with you how I get start and will update late...">
+
+
+  <link rel="stylesheet" href="/css/tufte.css">	
+  
+
+  <!-- Google Fonts loaded here -->
+  <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+
+  <!-- Load up MathJax script if needed ... specify in /_data/options.yml file-->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+  <link rel="canonical" href="https://gankkank.github.io/articles/15/get-start-with-jekyll">
+  <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
+</head>
+
+  <body>
+    <!--- Header and nav template site-wide -->
+<header>
+    <nav class="group">
+		<a href="/"><img class="badge" src="https://s.gravatar.com/avatar/e1cb6d2b55c8fee4549383ac99ec53e1?s=80" alt="CH"></a>
+		<a href="/page">A Page</a>
+		<a href="/about">About</a>
+	</nav>
+</header>
+
+    <article>
+      <h1>Get start with jekyll and github pages !!</h1>
+<p>May 2, 2015</p>
+
+
+<p>Oh, yeah, I decide to get start to write some technical posts with jekyll in github pages.</p>
+
+<p>I would like to share with you how I get start and will update later when I find out some awesome tips!</p>
+
+<!--more-->
+
+<p>Let&#39;s get started !</p>
+
+<h3>Install</h3>
+
+<p>You can install either <strong>github-pages</strong> gem or just <strong>jekyll</strong> gem.</p>
+
+<p>Github-pages depends on jekyll and provides you several commands to help you work with Github Pages, such as <code>github-pages health-check</code>. </p>
+
+<p><code>github-pages versions</code> are also handy to check versions of installed gems.</p>
+
+<p>Please check <a href="https://github.com/github/pages-gem">https://github.com/github/pages-gem</a> for details.</p>
+<div class="highlight"><pre><code class="language-" data-lang=""># github-pages versions
++-----------------------+---------+
+| Gem                   | Version |
++-----------------------+---------+
+| jekyll                | 2.4.0   |
+| jekyll-coffeescript   | 1.0.1   |
+| jekyll-sass-converter | 1.2.0   |
+| kramdown              | 1.5.0   |
+| maruku                | 0.7.0   |
+| rdiscount             | 2.1.7   |
+| redcarpet             | 3.1.2   |
+| RedCloth              | 4.2.9   |
+| liquid                | 2.6.1   |
+| pygments.rb           | 0.6.1   |
+| jemoji                | 0.4.0   |
+| jekyll-mentions       | 0.2.1   |
+| jekyll-redirect-from  | 0.6.2   |
+| jekyll-sitemap        | 0.8.1   |
++-----------------------+---------+
+</code></pre></div>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># install gems</span>
+<span class="n">gem</span> <span class="n">install</span> <span class="n">jekyll</span>
+<span class="c1"># or</span>
+<span class="n">gem</span> <span class="n">install</span> <span class="n">github</span><span class="o">-</span><span class="n">pages</span></code></pre></div>
+
+<h3>Configure</h3>
+
+<p>Jekyll supports markdown and liquid, so it&#39;s good to learn some basic ideas about Github <a href="https://help.github.com/articles/markdown-basics/">Markdown</a> pages and <a href="https://github.com/Shopify/liquid/wiki">Liquid</a> wiki and also <a href="http://jekyllrb.com/">Jekyll</a>.</p>
+
+<p>Then create a git repository with <code>jekyll new myblog</code>, it will generate all the files needed.</p>
+
+<p>It&#39;s important to change <code>_config.yml</code>. Add title, email, url, etc. In addition to some essential changes, I changed markdown to use <strong>redcarpet</strong> rather than <strong>kramdown</strong> to render markdown docs. kramdown is weired in some conditions such as when using <strong>```</strong> for the block content.</p>
+<div class="highlight"><pre><code class="language-" data-lang="">  markdown: redcarpet
+</code></pre></div>
+<h3>Write and Build</h3>
+
+<p>Jekyll offers some handy commands to help preview your blog. <code>jekyll serve --watch</code> will auto generate new pages by watching the files in directories.</p>
+
+<p>Default <code>jekyll build</code> will build your site at <code>_site</code> directory. You can change to other directory. For me, I just removed the <code>_site</code> directory and linked it to the directory <code>gankank.github.io</code>. After build, I can cd the directory to push new contents to github.</p>
+
+<h3>Deploy</h3>
+
+<p>I want to automate deploy steps when I decide to deploy new contents to github.</p>
+
+<p>The general steps will be:</p>
+
+<ul>
+<li><p>build new <code>_site</code></p></li>
+<li><p>add/commit new contents in <code>_site</code></p></li>
+<li><p>push them to my github repository <code>gankank.github.io</code></p></li>
+</ul>
+
+<p>So, I write my rake task to help me deploy contents to github. To deploy, run <code>rake deploy</code>, I default use the timestamp in the commit message when no commit message provides.</p>
+
+<p>To deploy with a commit message, run <code>rake deploy[&quot;my first commit&quot;]</code></p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Rakefile</span>
+<span class="nb">require</span> <span class="s2">"rake"</span>
+
+<span class="n">task</span> <span class="ss">default: </span><span class="sx">%w[deploy]</span>
+
+<span class="n">task</span> <span class="ss">:deploy</span><span class="p">,</span> <span class="p">[</span><span class="ss">:comment</span><span class="p">]</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="p">,</span> <span class="n">args</span><span class="o">|</span>
+    <span class="c1"># Build to _site</span>
+    <span class="sb">`jekyll build`</span>
+    <span class="c1"># Commit code in _site and push to github</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-%d %H:%M:%S"</span><span class="p">).</span><span class="nf">to_s</span>
+    <span class="n">args</span><span class="p">.</span><span class="nf">with_defaults</span><span class="p">(</span><span class="ss">comment: </span><span class="s2">"auto build </span><span class="si">#{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2"> HK"</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"deploy start"</span>
+    <span class="sb">`cd _site; git add . --all; git commit -m "</span><span class="si">#{</span><span class="n">args</span><span class="p">[</span><span class="ss">:comment</span><span class="p">]</span><span class="si">}</span><span class="sb">"; git push`</span>
+<span class="k">end</span></code></pre></div>
+
+<h3>Last</h3>
+
+<p>Since I&#39;m a beginner to jekyll, follow <a href="http://jekyllrb.com">Jekyll docs</a> will be essential. Hope it&#39;s a pleasant experience to write with jekyll !! </p>
+
+
+
+    </article>
+    <span class="print-footer">Get start with Jekyll and Github Pages !! - May 2, 2015 - jimmy yang</span>
+    <footer>
+  <ul class="footer-links group">
+      <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    
+    
+      <li>
+        <a href="//www.twitter.com/gankkank"><span class="icon-twitter"></span></a>
+      </li>
+    
+      <li>
+        <a href="//github.com/gankkank"><span class="icon-github"></span></a>
+      </li>
+    
+      <li>
+        <a href="/feed.xml"><span class="icon-feed"></span></a>
+      </li>
+      
+  </ul>
+<div class="credits">
+<span>&copy; 2015 &nbsp;&nbsp;JIMMY YANG</span></br> 
+<span>This site created with the <a href="//github.com/clayh53/tufte-jekyll">Tufte theme for gankkank </a> in <a href="//jekyllrb.com">Jekyll</a>.</span> 
+</div>  
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-52890177-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</footer>
+
+  </body>
+</html>

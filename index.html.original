@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>About</title>
+  <title>GANKKANK</title>
   <meta name="description" content="IT blogs about DEVOPS, ruby, chef and open source tools like redmine, docker, gitlab, KVM and cloud services like AWS. Through as a RHCE, I work mostly with Ubuntu. ^_^
 ">
 
@@ -21,7 +21,7 @@
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
-  <link rel="canonical" href="https://gankkank.github.io/about/">
+  <link rel="canonical" href="https://gankkank.github.io/.original">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
 </head>
 
@@ -36,20 +36,36 @@
 </header>
 
     <article>
-      <h1>About</h1>
-<p></p>
+      <div class="home">
 
+  <h1 class="page-heading">Posts</h1>
 
-<p>The <em>Tufte-Jekyll</em> theme is a natural extension of the work done by <a href="https://github.com/daveliepmann/tufte-css">Dave Leipmann</a> on Github that created a CSS file that allows web writers to use the simple and elegant style employed by Edward Tufte in his published materials.</p>
+  <ul class="post-list">
+    
+      <li>
+        <span class="post-meta">May 4, 2015</span>
 
-<p>To incorporate these styles into a Jekyll theme, I have made some very slight modifications that attempt to maintain the feel of the CSS styles in this repo.</p>
+        <h2>
+          <a class="post-link" href="/articles/15/docker-with-runit">Docker with Runit</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 2, 2015</span>
 
-<p>You can find the source code for Jekyll at <a href="https://github.com/jekyll/jekyll">github.com/jekyll/jekyll</a></p>
+        <h2>
+          <a class="post-link" href="/articles/15/get-start-with-jekyll">Get start with Jekyll and Github Pages !!</a>
+        </h2>
+      </li>
+    
+  </ul>
 
+  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
 
+</div>
 
     </article>
-    <span class="print-footer">About - jimmy yang</span>
+    <span class="print-footer"> - jimmy yang</span>
     <footer>
   <ul class="footer-links group">
       <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    
