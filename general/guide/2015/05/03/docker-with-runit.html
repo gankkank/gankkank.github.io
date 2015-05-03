@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Docker with Runit</title>
-  <meta name="description" content="Though run only one process per container is listed in dockerfile best practice, it&#39;s may be essentail to run multiple processes for preview purpose or i...">
+  <meta name="description" content="Though run only one process per container is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in...">
 
   <link rel="stylesheet" href="/css/main.css">
   <link rel="canonical" href="https://gankkank.github.io/general/guide/2015/05/03/docker-with-runit.html">
@@ -62,27 +62,27 @@
   </header>
 
   <article class="post-content">
-    <p>Though <a href="https://docs.docker.com/articles/dockerfile_best-practices/">run only one process per container</a> is listed in dockerfile best practice, it&#39;s may be essentail to run multiple processes for preview purpose or in a develop evenvironment. Someone also ask Docker <a href="https://docs.docker.com/faq/">how do I run more than one process in a Docker container</a>, there are superviord, runit, s6, or daemontools, etc we can choose.</p>
+    <p>Though <a href="https://docs.docker.com/articles/dockerfile_best-practices/">run only one process per container</a> is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in a development environment. Someone also ask Docker <a href="https://docs.docker.com/faq/">how do I run more than one process in a Docker container</a>, there are superviord, runit, s6, or daemontools, etc we can choose.</p>
 
 <p>There are some debtes about whether we should use runit in docker, you can read if you are interested in this. <a href="https://github.com/phusion/baseimage-docker/issues/164">#164</a> and phusion explain why they use runit in <a href="http://phusion.github.io/baseimage-docker/">runit section</a></p>
 
-<p>I&#39;d like to choose Runit on the first try since I saw many developers are using it.</p>
+<p>I will choose Runit on the first try since I saw many developers are using it.</p>
 
-<p>As a Docker beginner, I would like to migate some web services in my KVM to Docker to follow the fashion in order to see whether I can take benefit from it. I will start with ssh before I migrate my web services.</p>
+<p>As a Docker beginner, it&#39;s fantastic to migrate some web services in my KVM to Docker to follow the fashion in order to see whether I can take benefit from it. I will start with ssh before I migrate my web services.</p>
 
-<p>There is a good post from <a href="http://www.sourcediver.org/blog/2014/11/17/using-runit-in-a-docker-container/">sourcedirve.org</a> also shows how to use Runit in Docker. And you can also check docker <a href="https://phusion.github.io/baseimage-docker/">phusion</a> image.</p>
+<p>There is a good post from <a href="http://www.sourcediver.org/blog/2014/11/17/using-runit-in-a-docker-container/">sourcedirve.org</a>, which shows us how to use Runit in Docker. And you can also check docker <a href="https://phusion.github.io/baseimage-docker/">phusion</a> image.</p>
 
 <h2>Install</h2>
 
-<p>Install docker is quite straightforward:</p>
+<p>To install docker is quite straightforward:</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">wget -qO- https://get.docker.com/ | sh
 </code></pre></div>
-<p>Interactive with docker:</p>
+<p>Then, To interactive with docker instance:</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">docker run -i -t debian /bin/bash
 </code></pre></div>
-<p>The docker instance will exit after you hit the <code>exit</code> command. Docker also have commands to run a process as deamon but we will discuss who to use runit to launch ssh process. </p>
+<p>The docker instance will exit after you hit the <code>exit</code> command. Docker also have commands to run a process as daemon but we will discuss how to use runit to launch ssh process. </p>
 
-<p>The officical doc about ssh can be found at <a href="https://docs.docker.com/examples/running_ssh_service/">running ssh service</a>. I will copy some essential settings from it to my Dockerfile.</p>
+<p>The officical doc about ssh can be found at <a href="https://docs.docker.com/examples/running_ssh_service/">running ssh service</a>. Some settings in the document is essential to get the SSH service running in docker instance.</p>
 
 <h2>Prepare Scripts</h2>
 
@@ -150,9 +150,9 @@ docker attach &lt;ID&gt;
 
 <p>If you need packages like <code>curl</code>, <code>psmisc</code>, please add by yourself in Dockerfile.</p>
 
-<p>Default docker will set the ID as it&#39;s hostname, to launch docker instance with a specific hostname, you can use <code>docker run -h debian-runit1 -d -P -t debian-runit:0.1</code>. Details please check <a href="https://docs.docker.com/articles/networking/">docker networking</a></p>
+<p>Default docker will set the ID as it&#39;s hostname, to launch docker instance with a specific hostname, you can use <code>docker run -h debian-runit1 -d -P -t debian-runit:0.1</code>. For details please check <a href="https://docs.docker.com/articles/networking/">docker networking</a></p>
 
-<p>Hope this post can help your ! I will discuss rsyslog later.</p>
+<p>Hope this post can help you and I will discuss rsyslog later.</p>
 
   </article>
 
