@@ -6,13 +6,15 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 03 May 2015 23:38:05 +0800</pubDate>
-    <lastBuildDate>Sun, 03 May 2015 23:38:05 +0800</lastBuildDate>
+    <pubDate>Sun, 03 May 2015 23:52:46 +0800</pubDate>
+    <lastBuildDate>Sun, 03 May 2015 23:52:46 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
         <title>Docker with Runit</title>
-        <description>&lt;p&gt;Though &lt;a href=&quot;https://docs.docker.com/articles/dockerfile_best-practices/&quot;&gt;run only one process per container&lt;/a&gt; is listed in dockerfile best practice, it&amp;#39;s maybe essentail to run multiple processes for preview purpose or in a development environment. Someone also ask Docker &lt;a href=&quot;https://docs.docker.com/faq/&quot;&gt;how do I run more than one process in a Docker container&lt;/a&gt;, there are superviord, runit, s6, or daemontools, etc. we can choose.&lt;/p&gt;
+        <description>&lt;p&gt;Though &lt;a href=&quot;https://docs.docker.com/articles/dockerfile_best-practices/&quot;&gt;run only one process per container&lt;/a&gt; is listed in dockerfile best practice, it&amp;#39;s maybe essentail to run multiple processes for preview purpose or in a development environment.&lt;/p&gt;
+
+&lt;p&gt;Someone also ask Docker &lt;a href=&quot;https://docs.docker.com/faq/&quot;&gt;how do I run more than one process in a Docker container&lt;/a&gt;, there are superviord, runit, s6, or daemontools, etc. we can choose.&lt;/p&gt;
 
 &lt;!--more--&gt;
 
