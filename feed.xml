@@ -2,13 +2,118 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>GANKKANK</title>
-    <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+    <description>IT blogs about DEVOPS, ruby, chef and open source tools like redmine, docker, gitlab, KVM and cloud services like AWS. Through as a RHCE, I work mostly with Ubuntu. ^_^
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 01 May 2015 20:26:37 +0800</pubDate>
-    <lastBuildDate>Fri, 01 May 2015 20:26:37 +0800</lastBuildDate>
+    <pubDate>Sun, 03 May 2015 21:46:24 +0800</pubDate>
+    <lastBuildDate>Sun, 03 May 2015 21:46:24 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Docker with Runit</title>
+        <description>&lt;p&gt;Though &lt;a href=&quot;https://docs.docker.com/articles/dockerfile_best-practices/&quot;&gt;run only one process per container&lt;/a&gt; is listed in dockerfile best practice, it&amp;#39;s may be essentail to run multiple processes for preview purpose or in a develop evenvironment. Someone also ask Docker &lt;a href=&quot;https://docs.docker.com/faq/&quot;&gt;how do I run more than one process in a Docker container&lt;/a&gt;, there are superviord, runit, s6, or daemontools, etc we can choose.&lt;/p&gt;
+
+&lt;p&gt;There are some debtes about whether we should use runit in docker, you can read if you are interested in this. &lt;a href=&quot;https://github.com/phusion/baseimage-docker/issues/164&quot;&gt;#164&lt;/a&gt; and phusion explain why they use runit in &lt;a href=&quot;http://phusion.github.io/baseimage-docker/&quot;&gt;runit section&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;#39;d like to choose Runit on the first try since I saw many developers are using it.&lt;/p&gt;
+
+&lt;p&gt;As a Docker beginner, I would like to migate some web services in my KVM to Docker to follow the fashion in order to see whether I can take benefit from it. I will start with ssh before I migrate my web services.&lt;/p&gt;
+
+&lt;p&gt;There is a good post from &lt;a href=&quot;http://www.sourcediver.org/blog/2014/11/17/using-runit-in-a-docker-container/&quot;&gt;sourcedirve.org&lt;/a&gt; also shows how to use Runit in Docker. And you can also check docker &lt;a href=&quot;https://phusion.github.io/baseimage-docker/&quot;&gt;phusion&lt;/a&gt; image.&lt;/p&gt;
+
+&lt;h2&gt;Install&lt;/h2&gt;
+
+&lt;p&gt;Install docker is quite straightforward:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;wget -qO- https://get.docker.com/ | sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Interactive with docker:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;docker run -i -t debian /bin/bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The docker instance will exit after you hit the &lt;code&gt;exit&lt;/code&gt; command. Docker also have commands to run a process as deamon but we will discuss who to use runit to launch ssh process. &lt;/p&gt;
+
+&lt;p&gt;The officical doc about ssh can be found at &lt;a href=&quot;https://docs.docker.com/examples/running_ssh_service/&quot;&gt;running ssh service&lt;/a&gt;. I will copy some essential settings from it to my Dockerfile.&lt;/p&gt;
+
+&lt;h2&gt;Prepare Scripts&lt;/h2&gt;
+
+&lt;p&gt;Runit run script to run ssh service, copy to &lt;strong&gt;/etc/service/sshd/run&lt;/strong&gt; &lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;#!/bin/bash
+exec 2&amp;gt;&amp;amp;1
+exec /usr/sbin/sshd -D -e
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Script to start runit, copy to &lt;strong&gt;/usr/sbin/runsvdir-start&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;#!/bin/bash
+export &amp;gt; /etc/envvars
+exec /usr/sbin/runsvdir-start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2&gt;Build Image with runit&lt;/h2&gt;
+
+&lt;p&gt;Make sure &amp;quot;./service/ssh/run&amp;quot; and &amp;quot;./runit_bootstrap&amp;quot; exist in local directory.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;#Dockerfile
+FROM debian:jessie
+
+#
+RUN apt-get update &amp;amp;&amp;amp; apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo &amp;#39;root:screencast&amp;#39; | chpasswd
+RUN sed -i &amp;#39;s/PermitRootLogin without-password/PermitRootLogin yes/&amp;#39; /etc/ssh/sshd_config
+
+# Fix
+RUN sed &amp;#39;s@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g&amp;#39; -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE &amp;quot;in users profile&amp;quot;
+RUN echo &amp;quot;export VISIBLE=now&amp;quot; &amp;gt;&amp;gt; /etc/profile
+
+# prepare script
+RUN mkdir -p /etc/service/ssh/
+COPY ./service/ssh/run /etc/service/ssh/run
+RUN chmod 755  /etc/service/ssh/run
+
+#install, config runit
+RUN touch /etc/inittab
+RUN apt-get update &amp;amp;&amp;amp; DEBIAN_FRONTEND=noninteractive apt-get install -y -q runit
+
+COPY runit_bootstrap /usr/sbin/runit_bootstrap
+RUN chmod 755 /usr/sbin/runit_bootstrap
+
+EXPOSE 22
+ENTRYPOINT [&amp;quot;/usr/sbin/runit_bootstrap&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;After all files are ready, we can start to build the images. You can use the following commands to tag image, start docker instance, and login to docker, etc.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;# start to build
+docker build .
+# find ID of new build image
+docker images
+# tag the image
+docker tag 27bc398e8222 debian-runit:0.1
+
+#An ENTRYPOINT allows you to configure a container that will run as an executable.
+#So to run the image (-d deamon):
+docker run -d -P -t debian-runit:0.1
+
+# login to docker container
+docker exec -i -t &amp;lt;ID&amp;gt; bash
+# or:
+docker attach &amp;lt;ID&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;After you launch the docker instance you build, your can use ssh to login. Root password should be the one in Dockerfile.&lt;/p&gt;
+
+&lt;p&gt;If you need packages like &lt;code&gt;curl&lt;/code&gt;, &lt;code&gt;psmisc&lt;/code&gt;, please add by yourself in Dockerfile.&lt;/p&gt;
+
+&lt;p&gt;Default docker will set the ID as it&amp;#39;s hostname, to launch docker instance with a specific hostname, you can use &lt;code&gt;docker run -h debian-runit1 -d -P -t debian-runit:0.1&lt;/code&gt;. Details please check &lt;a href=&quot;https://docs.docker.com/articles/networking/&quot;&gt;docker networking&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Hope this post can help your ! I will discuss rsyslog later.&lt;/p&gt;
+</description>
+        <pubDate>Sun, 03 May 2015 00:00:00 +0800</pubDate>
+        <link>https://gankkank.github.io/general/guide/2015/05/03/docker-with-runit.html</link>
+        <guid isPermaLink="true">https://gankkank.github.io/general/guide/2015/05/03/docker-with-runit.html</guid>
+        
+        
+        <category>general</category>
+        
+        <category>guide</category>
+        
+      </item>
     
       <item>
         <title>Get start with Jekyll and Github Pages !!</title>
