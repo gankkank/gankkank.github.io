@@ -206,9 +206,10 @@ body {
   color: #111;
   max-width: 1400px; }
 
-@media screen and (min-width: 800px) {
+/*@media screen and (min-width: 800px) {
   body {
     width: 95%; } }
+    */
 body > header {
   padding-top: 1rem;
   border-bottom: 1px #aaaaaa solid;
@@ -301,9 +302,9 @@ cite {
   font-family: "Gill Sans", "Gill Sans MT", "Lato", Calibri, sans-serif; }
 
 pre code, pre code p, code {
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: monospace, Consolas, "Liberation Mono", Menlo, Courier, monospace;
   color: #222;
-  font-size: 1.2rem;
+  font-size: 1rem;
   line-height: 1.63333333333; }
 
 pre {
@@ -322,7 +323,7 @@ p, li {
   vertical-align: baseline; }
 
 p, article ul li, pre code, pre code p, code {
-  width: 55%; }
+  width: 65%; }
 
 @media screen and (max-width: 600px) {
   p {
@@ -348,14 +349,15 @@ sup, sub {
 sub {
   top: 0.2rem; }
 
-.fullwidth {
+/*.fullwidth {
   max-width: 95%; }
+  */
 
 .sidenote, .marginnote {
   float: right;
   clear: right;
-  margin-right: -60%;
-  width: 50%;
+  margin-right: -40%;
+  width: 30%;
   margin-top: 0rem;
   margin-bottom: 1.96rem;
   font-size: 1.0rem;

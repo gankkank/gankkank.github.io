@@ -41,7 +41,17 @@
     
       <li class="listing">
       	<hr class="slender">
-      	<a href="/articles/15/docker-with-runit"><h4 class="contrast">Docker with Runit</h4></a>
+      	<a href="/articles/15/docker-with-syslog"><h4 class="contrast">Docker with Runit, Part 2 Rsyslog</h4></a>
+      	<span class="smaller">May 5, 2015</span>  <br/>
+		<div><p>Before start to use syslog within docker instance, I found some posts discussing <a href="https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/">docker zombie process problem</a> and <a href="https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/">whether we should use ssh or just <code>docker exec</code></a>
+<sup class='sidenote-number'>1</sup><span class='sidenote'><sup class='sidenote-number'>1</sup> Post series from phusion</span></p>
+</div>
+		
+      </li>
+    
+      <li class="listing">
+      	<hr class="slender">
+      	<a href="/articles/15/docker-with-runit"><h4 class="contrast">Docker with Runit, Part 1 SSH</h4></a>
       	<span class="smaller">May 4, 2015</span>  <br/>
 		<div><p>Though <a href="https://docs.docker.com/articles/dockerfile_best-practices/">run only one process per container</a> is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in a development environment.</p>
 

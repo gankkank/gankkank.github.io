@@ -6,19 +6,100 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2015 13:26:23 +0800</pubDate>
-    <lastBuildDate>Mon, 04 May 2015 13:26:23 +0800</lastBuildDate>
+    <pubDate>Mon, 04 May 2015 21:10:39 +0800</pubDate>
+    <lastBuildDate>Mon, 04 May 2015 21:10:39 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
-        <title>Docker with Runit</title>
+        <title>Docker with Runit, Part 2 Rsyslog</title>
+        <description>&lt;p&gt;Before start to use syslog within docker instance, I found some posts discussing &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/&quot;&gt;docker zombie process problem&lt;/a&gt; and &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/&quot;&gt;whether we should use ssh or just &lt;code&gt;docker exec&lt;/code&gt;&lt;/a&gt;
+&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt; Post series from phusion&lt;/span&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;&lt;code&gt;docker exec&lt;/code&gt; is introduced since docker 1.4, user will get root access to the docker instance after they login. So, SSH is helpful in certain conditions. &lt;a href=&quot;http://eng.rightscale.com/2014/10/27/dockerizing-rightscale.html&quot;&gt;Rightscale&lt;/a&gt; shared their idea on &amp;quot;how to use SSH in docker with host SSH agent socket and how to handle logs&amp;quot;, which is also worth reading.&lt;/p&gt;
+
+&lt;p&gt;Now, let&amp;#39;s come back to rsyslog.&lt;/p&gt;
+
+&lt;h3&gt;Run rsyslog&lt;/h3&gt;
+
+&lt;p&gt;A syslog daemon is necessary for many services include kernel itself. We will still use runit to indicate show to use syslog within docker instance.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Runit script to run rsyslog, copy to &lt;strong&gt;/etc/service/rsyslog/run&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;2&amp;gt;&amp;amp;1
+&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /
+chgrp syslog /var/log
+chmod g+w /var/log
+&lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;rsyslogd -n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Dockerfile&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;#Dockerfile
+FROM debian:jessie
+
+# install, config rsyslog
+RUN apt-get update &amp;amp;&amp;amp; apt-get install rsyslog
+RUN mkdir -p /etc/service/rsyslog/
+COPY ./service/rsyslog/run /etc/service/rsyslog/run
+RUN chmod 755  /etc/service/rsyslog/run
+
+# install, config runit
+RUN touch /etc/inittab
+RUN apt-get update &amp;amp;&amp;amp; DEBIAN_FRONTEND=noninteractive apt-get install -y -q runit
+
+COPY runit_bootstrap /usr/sbin/runit_bootstrap
+RUN chmod 755 /usr/sbin/runit_bootstrap
+
+ENTRYPOINT [&quot;/usr/sbin/runit_bootstrap&quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Build image, tag and run it&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;docker build .
+docker tag 5416c3b71823 debian-runit:rsyslog
+
+# --name:   set docker NAME, should be used before option -t
+# -h:       set docker instance hostname
+docker run -d --name runit-rsyslog1 -h runit-rsyslog1 -t debian-runit:rsyslog
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Check&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# docker exec -i -t runit-rsyslog1 bash
+# pstree
+runsvdir---runsv---rsyslogd-+-{in:imuxsock}
+                            `-{rs:main Q:Reg}`
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        <pubDate>Tue, 05 May 2015 07:00:00 +0800</pubDate>
+        <link>https://gankkank.github.io/articles/15/docker-with-syslog</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/15/docker-with-syslog</guid>
+        
+        <category>docker</category>
+        
+        <category>runit</category>
+        
+        <category>syslog</category>
+        
+        
+        <category>general</category>
+        
+        <category>guide</category>
+        
+      </item>
+    
+      <item>
+        <title>Docker with Runit, Part 1 SSH</title>
         <description>&lt;p&gt;Though &lt;a href=&quot;https://docs.docker.com/articles/dockerfile_best-practices/&quot;&gt;run only one process per container&lt;/a&gt; is listed in dockerfile best practice, it&amp;#39;s maybe essentail to run multiple processes for preview purpose or in a development environment.&lt;/p&gt;
 
 &lt;p&gt;Someone also ask Docker &lt;a href=&quot;https://docs.docker.com/faq/&quot;&gt;how do I run more than one process in a Docker container&lt;/a&gt;, there are superviord, runit, s6, or daemontools, etc. we can choose.&lt;/p&gt;
 
 &lt;!--more--&gt;
 
-&lt;p&gt;There are some debtes about whether we should use runit in docker, you can read if you are interested in this. &lt;a href=&quot;https://github.com/phusion/baseimage-docker/issues/164&quot;&gt;#164&lt;/a&gt; and phusion explain why they use runit in &lt;a href=&quot;http://phusion.github.io/baseimage-docker/&quot;&gt;runit section&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;There are some debtes about whether we should use runit in docker, you can read if you are interested in this. &lt;a href=&quot;https://github.com/phusion/baseimage-docker/issues/164&quot;&gt;#164&lt;/a&gt; and phusion explain why they use runit in &lt;a href=&quot;http://phusion.github.io/baseimage-docker/&quot;&gt;runit section&lt;/a&gt; and &lt;a href=&quot;https://github.com/phusion/baseimage-docker#docker_single_process&quot;&gt;in github&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;I will choose Runit on the first try since I saw many developers are using it.&lt;/p&gt;
 
@@ -111,6 +192,12 @@ docker attach &amp;lt;ID&amp;gt;
         <pubDate>Mon, 04 May 2015 07:00:00 +0800</pubDate>
         <link>https://gankkank.github.io/articles/15/docker-with-runit</link>
         <guid isPermaLink="true">https://gankkank.github.io/articles/15/docker-with-runit</guid>
+        
+        <category>docker</category>
+        
+        <category>runit</category>
+        
+        <category>ssh</category>
         
         
         <category>general</category>
@@ -216,6 +303,10 @@ docker attach &amp;lt;ID&amp;gt;
         <pubDate>Sat, 02 May 2015 07:00:00 +0800</pubDate>
         <link>https://gankkank.github.io/articles/15/get-start-with-jekyll</link>
         <guid isPermaLink="true">https://gankkank.github.io/articles/15/get-start-with-jekyll</guid>
+        
+        <category>jekyll</category>
+        
+        <category>github-pages</category>
         
         
         <category>general</category>

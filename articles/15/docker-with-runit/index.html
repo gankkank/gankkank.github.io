@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Docker with Runit</title>
+  <title>Docker with Runit, Part 1 SSH</title>
   <meta name="description" content="Though run only one process per container is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in...">
 
 
@@ -35,8 +35,18 @@
 </header>
 
     <article>
-      <h1>Docker with runit</h1>
+      <h1>Docker with runit, part 1 ssh</h1>
 <p>May 4, 2015</p>
+
+<p>
+
+<a># docker</a>
+
+<a># runit</a>
+
+<a># ssh</a>
+
+</p>
 
 
 <p>Though <a href="https://docs.docker.com/articles/dockerfile_best-practices/">run only one process per container</a> is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in a development environment.</p>
@@ -45,7 +55,7 @@
 
 <!--more-->
 
-<p>There are some debtes about whether we should use runit in docker, you can read if you are interested in this. <a href="https://github.com/phusion/baseimage-docker/issues/164">#164</a> and phusion explain why they use runit in <a href="http://phusion.github.io/baseimage-docker/">runit section</a></p>
+<p>There are some debtes about whether we should use runit in docker, you can read if you are interested in this. <a href="https://github.com/phusion/baseimage-docker/issues/164">#164</a> and phusion explain why they use runit in <a href="http://phusion.github.io/baseimage-docker/">runit section</a> and <a href="https://github.com/phusion/baseimage-docker#docker_single_process">in github</a></p>
 
 <p>I will choose Runit on the first try since I saw many developers are using it.</p>
 
@@ -142,6 +152,8 @@ docker attach &lt;ID&gt;
 <div>
 <ul>
 
+<li><a href="/articles/15/docker-with-syslog">Docker with Runit, Part 2 Rsyslog</a></li>
+
 <li><a href="/articles/15/get-start-with-jekyll">Get start with Jekyll and Github Pages !!</a></li>
 
 <ul>
@@ -149,7 +161,7 @@ docker attach &lt;ID&gt;
 
 
     </article>
-    <span class="print-footer">Docker with Runit - May 4, 2015 - jimmy yang</span>
+    <span class="print-footer">Docker with Runit, Part 1 SSH - May 4, 2015 - jimmy yang</span>
     <footer>
   <ul class="footer-links group">
       <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    

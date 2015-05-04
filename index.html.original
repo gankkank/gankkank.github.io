@@ -43,10 +43,18 @@
   <ul class="post-list">
     
       <li>
+        <span class="post-meta">May 5, 2015</span>
+
+        <h2>
+          <a class="post-link" href="/articles/15/docker-with-syslog">Docker with Runit, Part 2 Rsyslog</a>
+        </h2>
+      </li>
+    
+      <li>
         <span class="post-meta">May 4, 2015</span>
 
         <h2>
-          <a class="post-link" href="/articles/15/docker-with-runit">Docker with Runit</a>
+          <a class="post-link" href="/articles/15/docker-with-runit">Docker with Runit, Part 1 SSH</a>
         </h2>
       </li>
     
