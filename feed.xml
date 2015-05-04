@@ -6,13 +6,13 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2015 21:11:28 +0800</pubDate>
-    <lastBuildDate>Mon, 04 May 2015 21:11:28 +0800</lastBuildDate>
+    <pubDate>Mon, 04 May 2015 21:27:01 +0800</pubDate>
+    <lastBuildDate>Mon, 04 May 2015 21:27:01 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
         <title>Docker with Runit, Part 2 Rsyslog</title>
-        <description>&lt;p&gt;Before start to use syslog within docker instance, I found some posts discussing &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/&quot;&gt;docker zombie process problem&lt;/a&gt; and &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/&quot;&gt;whether we should use ssh or just &lt;code&gt;docker exec&lt;/code&gt;&lt;/a&gt;
+        <description>&lt;p&gt;Before we start to use syslog within docker instance, I found some posts discussing &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/&quot;&gt;docker zombie process problem&lt;/a&gt; and &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/&quot;&gt;whether we should use ssh or just &lt;code&gt;docker exec&lt;/code&gt;&lt;/a&gt;
 &lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt; Post series from phusion&lt;/span&gt;&lt;/p&gt;
 
 &lt;!--more--&gt;
@@ -23,7 +23,7 @@
 
 &lt;h3&gt;Run rsyslog&lt;/h3&gt;
 
-&lt;p&gt;A syslog daemon is necessary for many services include kernel itself. We will still use runit to indicate show to use syslog within docker instance.&lt;/p&gt;
+&lt;p&gt;A syslog daemon is necessary for many services include kernel itself. We will still use runit to indicate how to use syslog within docker instance.&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Runit script to run rsyslog, copy to &lt;strong&gt;/etc/service/rsyslog/run&lt;/strong&gt;&lt;/li&gt;
@@ -69,6 +69,8 @@ docker run -d --name runit-rsyslog1 -h runit-rsyslog1 -t debian-runit:rsyslog
 &lt;ul&gt;
 &lt;li&gt;Check&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;p&gt;Check processes running in docker instance.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# docker exec -i -t runit-rsyslog1 bash
 # pstree
 runsvdir---runsv---rsyslogd-+-{in:imuxsock}

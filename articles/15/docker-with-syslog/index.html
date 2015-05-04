@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Docker with Runit, Part 2 Rsyslog</title>
-  <meta name="description" content="Before start to use syslog within docker instance, I found some posts discussing docker zombie process problem and whether we should use ssh or just docker e...">
+  <meta name="description" content="Before we start to use syslog within docker instance, I found some posts discussing docker zombie process problem and whether we should use ssh or just docke...">
 
 
   <link rel="stylesheet" href="/css/tufte.css">	
@@ -49,7 +49,7 @@
 </p>
 
 
-<p>Before start to use syslog within docker instance, I found some posts discussing <a href="https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/">docker zombie process problem</a> and <a href="https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/">whether we should use ssh or just <code>docker exec</code></a>
+<p>Before we start to use syslog within docker instance, I found some posts discussing <a href="https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/">docker zombie process problem</a> and <a href="https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/">whether we should use ssh or just <code>docker exec</code></a>
 <sup class='sidenote-number'>1</sup><span class='sidenote'><sup class='sidenote-number'>1</sup> Post series from phusion</span></p>
 
 <!--more-->
@@ -60,7 +60,7 @@
 
 <h3>Run rsyslog</h3>
 
-<p>A syslog daemon is necessary for many services include kernel itself. We will still use runit to indicate show to use syslog within docker instance.</p>
+<p>A syslog daemon is necessary for many services include kernel itself. We will still use runit to indicate how to use syslog within docker instance.</p>
 
 <ul>
 <li>Runit script to run rsyslog, copy to <strong>/etc/service/rsyslog/run</strong></li>
@@ -106,6 +106,8 @@ docker run -d --name runit-rsyslog1 -h runit-rsyslog1 -t debian-runit:rsyslog
 <ul>
 <li>Check</li>
 </ul>
+
+<p>Check processes running in docker instance.</p>
 <div class="highlight"><pre><code class="language-" data-lang=""># docker exec -i -t runit-rsyslog1 bash
 # pstree
 runsvdir---runsv---rsyslogd-+-{in:imuxsock}
