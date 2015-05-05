@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 04 May 2015 21:27:01 +0800</pubDate>
-    <lastBuildDate>Mon, 04 May 2015 21:27:01 +0800</lastBuildDate>
+    <pubDate>Tue, 05 May 2015 12:27:15 +0800</pubDate>
+    <lastBuildDate>Tue, 05 May 2015 12:27:15 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -77,8 +77,8 @@ runsvdir---runsv---rsyslogd-+-{in:imuxsock}
                             `-{rs:main Q:Reg}`
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
         <pubDate>Tue, 05 May 2015 07:00:00 +0800</pubDate>
-        <link>https://gankkank.github.io/articles/15/docker-with-syslog</link>
-        <guid isPermaLink="true">https://gankkank.github.io/articles/15/docker-with-syslog</guid>
+        <link>https://gankkank.github.io/articles/2015/05/05/docker-with-syslog</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/05/docker-with-syslog</guid>
         
         <category>docker</category>
         
@@ -192,8 +192,8 @@ docker attach &amp;lt;ID&amp;gt;
 &lt;p&gt;Hope this post can help you and I will discuss rsyslog later.&lt;/p&gt;
 </description>
         <pubDate>Mon, 04 May 2015 07:00:00 +0800</pubDate>
-        <link>https://gankkank.github.io/articles/15/docker-with-runit</link>
-        <guid isPermaLink="true">https://gankkank.github.io/articles/15/docker-with-runit</guid>
+        <link>https://gankkank.github.io/articles/2015/05/04/docker-with-runit</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/04/docker-with-runit</guid>
         
         <category>docker</category>
         
@@ -303,8 +303,8 @@ docker attach &amp;lt;ID&amp;gt;
 &lt;p&gt;Since I&amp;#39;m a beginner to jekyll, follow &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; will be essential. Hope it&amp;#39;s a pleasant experience to write with jekyll !! &lt;/p&gt;
 </description>
         <pubDate>Sat, 02 May 2015 07:00:00 +0800</pubDate>
-        <link>https://gankkank.github.io/articles/15/get-start-with-jekyll</link>
-        <guid isPermaLink="true">https://gankkank.github.io/articles/15/get-start-with-jekyll</guid>
+        <link>https://gankkank.github.io/articles/2015/05/02/get-start-with-jekyll</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/02/get-start-with-jekyll</guid>
         
         <category>jekyll</category>
         
