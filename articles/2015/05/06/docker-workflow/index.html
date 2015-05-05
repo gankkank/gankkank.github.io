@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Docker workflow</title>
+  <meta name="description" content="Docker Hub is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Check and remove ...">
+
+
+  <link rel="stylesheet" href="/css/tufte.css">	
+  
+
+  <!-- Google Fonts loaded here -->
+  <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+
+  <!-- Load up MathJax script if needed ... specify in /_data/options.yml file-->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+  <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/06/docker-workflow">
+  <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
+</head>
+
+  <body>
+    <!--- Header and nav template site-wide -->
+<header>
+    <nav class="group">
+		<a href="/"><img class="badge" src="https://s.gravatar.com/avatar/e1cb6d2b55c8fee4549383ac99ec53e1?s=80" alt="CH"></a>
+		<a href="/page">A Page</a>
+		<a href="/about">About</a>
+	</nav>
+</header>
+
+    <article>
+      <h1>Docker workflow</h1>
+<p>May 6, 2015</p>
+
+<p>
+
+<a># docker</a>
+
+<a># runit</a>
+
+<a># jenkins</a>
+
+<a># continuous integration</a>
+
+<a># workflow</a>
+
+</p>
+
+
+<p><a href="https://hub.docker.com">Docker Hub</a> is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Check and remove your credentials before build images and push them to docker hub.</p>
+
+<!--more-->
+
+<h2>Work with Docker Images</h2>
+
+<p>Get start to <a href="https://docs.docker.com/userguide/dockerimages/">work with docker images</a> by leveraging docker commands such as <code>docker pull</code>, <code>docker build</code>, <code>docker commit -m &quot;comments&quot; -a &quot;author&quot;</code>, <code>docker push</code></p>
+
+<p>Tags is handy to distinguish different image versions.</p>
+
+<p>Such as <code>docker pull ubuntu</code> will download the latest version of ubuntu and <code>docker pull ubuntu:14.04</code> will download the 14.04 version. So, you&#39;d better make sure that you have specified an image version in Dockerfile, otherwise, you may encounter problems when ubuntu haved updated it&#39;s latest version from 12.04 to 14.04.</p>
+<div class="highlight"><pre><code class="language-" data-lang=""># Dockerfile
+FROM ubuntu:14.04
+</code></pre></div>
+<p>As showed by the docker documents, when working with docker hub:</p>
+
+<ol>
+<li>User pull a docker image to local</li>
+<li>User build the docker images locally (by using Dockerfile or login to the docker instance)</li>
+<li>User commit the changes</li>
+<li>User upload the docker image to their own path</li>
+</ol>
+
+<h2>My Workflow</h2>
+
+<p>When working with something is credential, we have to use servers to host our own services/data. We have a similiar worlflow compare to the public approach.</p>
+
+<p>We host our code using <a href="https://about.gitlab.com/downloads/">Gitlab CE</a> (Thanks Gitlab, it&#39;s a great project)</p>
+
+<ul>
+<li>The current workflow to use git is:</li>
+</ul>
+
+<ol>
+<li>User update git repository in Gitlab CE.</li>
+<li>Gitlab CE hooks call Jenkins to run jobs.</li>
+<li>Jenkins run the jobs and produce a result.</li>
+<li>User view jenkins result at Gitlab CE page.</li>
+</ol>
+
+<ul>
+<li>When we use docker</li>
+</ul>
+
+<ol>
+<li>User update git repository for Dockerfile.</li>
+<li>Gitlab CE hooks call Jenkins to run jobs.</li>
+<li>Jenkins build docker images.</li>
+<li>Jenkins start and test the docker images.</li>
+<li>User view jenkins result at Gitlab CE page.</li>
+<li>Docker registry server serve the builded docker images (if jenkins tests are successful).</li>
+</ol>
+
+<h2>Last</h2>
+
+<p>Docker&#39;s registry service have been rewritten in golang - <a href="https://docs.docker.com/registry/">Docker Registry 2.0</a> at <a href="https://github.com/docker/distribution">docker/distribution</a> in Github. Hope it&#39;s good for production environment.</p>
+
+
+
+<br>
+<h3> Related Posts</h3>
+<div>
+<ul>
+
+<li><a href="/articles/2015/05/05/docker-with-syslog">Docker with Runit, Part 2 Rsyslog</a></li>
+
+<li><a href="/articles/2015/05/04/docker-with-runit">Docker with Runit, Part 1 SSH</a></li>
+
+<li><a href="/articles/2015/05/02/get-start-with-jekyll">Get start with Jekyll and Github Pages !!</a></li>
+
+<ul>
+</div>
+
+
+    </article>
+    <span class="print-footer">Docker workflow - May 6, 2015 - jimmy yang</span>
+    <footer>
+  <ul class="footer-links group">
+      <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    
+    
+      <li>
+        <a href="//www.twitter.com/gankkank"><span class="icon-twitter"></span></a>
+      </li>
+    
+      <li>
+        <a href="//github.com/gankkank"><span class="icon-github"></span></a>
+      </li>
+    
+      <li>
+        <a href="/feed.xml"><span class="icon-feed"></span></a>
+      </li>
+      
+  </ul>
+<div class="credits">
+<span>&copy; 2015 &nbsp;&nbsp;JIMMY YANG</span></br> 
+<span>This site created with the <a href="//github.com/clayh53/tufte-jekyll">Tufte theme for gankkank </a> in <a href="//jekyllrb.com">Jekyll</a>.</span> 
+</div>  
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-52890177-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</footer>
+
+  </body>
+</html>

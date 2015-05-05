@@ -41,6 +41,15 @@
     
       <li class="listing">
       	<hr class="slender">
+      	<a href="/articles/2015/05/06/docker-workflow"><h4 class="contrast">Docker workflow</h4></a>
+      	<span class="smaller">May 6, 2015</span>  <br/>
+		<div><p><a href="https://hub.docker.com">Docker Hub</a> is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Check and remove your credentials before build images and push them to docker hub.</p>
+</div>
+		
+      </li>
+    
+      <li class="listing">
+      	<hr class="slender">
       	<a href="/articles/2015/05/05/docker-with-syslog"><h4 class="contrast">Docker with Runit, Part 2 Rsyslog</h4></a>
       	<span class="smaller">May 5, 2015</span>  <br/>
 		<div><p>Before we start to use syslog within docker instance, I found some posts discussing <a href="https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/">docker zombie process problem</a> and <a href="https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/">whether we should use ssh or just <code>docker exec</code></a>
