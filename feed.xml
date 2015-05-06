@@ -6,12 +6,12 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 06 May 2015 22:50:55 +0800</pubDate>
-    <lastBuildDate>Wed, 06 May 2015 22:50:55 +0800</lastBuildDate>
+    <pubDate>Wed, 06 May 2015 22:59:32 +0800</pubDate>
+    <lastBuildDate>Wed, 06 May 2015 22:59:32 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
-        <title>Docker workflow, Part 2 Jenkins</title>
+        <title>Docker workflow, Part 2: Jenkins</title>
         <description>&lt;p&gt;We will discuss the technical details about implementing our workflow. This time, &amp;quot;Jenkins&amp;quot; comes first.&lt;/p&gt;
 
 &lt;!--more--&gt;
@@ -144,7 +144,7 @@ docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 tar xvf 
       </item>
     
       <item>
-        <title>Docker workflow, Part 1 Get Start</title>
+        <title>Docker workflow, Part 1: Get Start</title>
         <description>&lt;p&gt;&lt;a href=&quot;https://hub.docker.com&quot;&gt;Docker Hub&lt;/a&gt; is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Please check and remove your credentials before you build images and push them to docker hub.&lt;/p&gt;
 
 &lt;!--more--&gt;
@@ -213,7 +213,7 @@ FROM ubuntu:14.04
       </item>
     
       <item>
-        <title>Docker with Runit, Part 2 Rsyslog</title>
+        <title>Docker with Runit, Part 2: Rsyslog</title>
         <description>&lt;p&gt;Before we start to use syslog within docker instance, I found some posts discussing &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/&quot;&gt;docker zombie process problem&lt;/a&gt; and &lt;a href=&quot;https://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/&quot;&gt;whether we should use ssh or just &lt;code&gt;docker exec&lt;/code&gt;&lt;/a&gt;
 &lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt; Post series from phusion&lt;/span&gt;&lt;/p&gt;
 
@@ -296,7 +296,7 @@ runsvdir---runsv---rsyslogd-+-{in:imuxsock}
       </item>
     
       <item>
-        <title>Docker with Runit, Part 1 SSH</title>
+        <title>Docker with Runit, Part 1: SSH</title>
         <description>&lt;p&gt;Though &lt;a href=&quot;https://docs.docker.com/articles/dockerfile_best-practices/&quot;&gt;run only one process per container&lt;/a&gt; is listed in dockerfile best practice, it&amp;#39;s maybe essentail to run multiple processes for preview purpose or in a development environment.&lt;/p&gt;
 
 &lt;p&gt;Someone also ask Docker &lt;a href=&quot;https://docs.docker.com/faq/&quot;&gt;how do I run more than one process in a Docker container&lt;/a&gt;, there are superviord, runit, s6, or daemontools, etc. we can choose.&lt;/p&gt;
