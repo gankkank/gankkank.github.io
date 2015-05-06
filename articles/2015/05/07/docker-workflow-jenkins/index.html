@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Docker workflow, Part 2 Jenkins</title>
-  <meta name="description" content="We will discuss the technical details about implement our workflow. This time &quot;Jenkins&quot; first.">
+  <meta name="description" content="We will discuss the technical details about implementing our workflow. This time, &quot;Jenkins&quot; comes first.">
 
 
   <link rel="stylesheet" href="/css/tufte.css">	
@@ -51,15 +51,15 @@
 </p>
 
 
-<p>We will discuss the technical details about implement our workflow. This time &quot;Jenkins&quot; first.</p>
+<p>We will discuss the technical details about implementing our workflow. This time, &quot;Jenkins&quot; comes first.</p>
 
 <!--more-->
 
 <h2>Jenkins</h2>
 
-<p>Jenkins provides an office docker image <a href="https://registry.hub.docker.com/_/jenkins/">jenkins:latest</a> at Docker hub. You can find it&#39;s git repository <a href="https://github.com/jenkinsci/docker">jenkinsci/docker</a> at github.</p>
+<p>Jenkins provides us with an office docker image <a href="https://registry.hub.docker.com/_/jenkins/">jenkins:latest</a> at Docker hub. You can find its git repository <a href="https://github.com/jenkinsci/docker">jenkinsci/docker</a> at Github.</p>
 
-<p>My initial lifecycle events prepared for jenkins will be:</p>
+<p>My initial lifecycle events prepared for Jenkins will be:</p>
 <div class="highlight"><pre><code class="language-" data-lang="">#Lifecycle Events
 Start       : start jenkins with docker image with essential settings
 Deploy      : deploy the latest/needed plugins or configs I want
@@ -67,11 +67,11 @@ Maintenance : backup/restore data
 </code></pre></div>
 <h3>Get It Run</h3>
 
-<p>I choose to use it&#39;s offical image to save my time. After started, I sadly discoverd that I can only get <code>jenkins</code> user permission by run <code>docker exec</code>.
-<sup class='sidenote-number'>1</sup><span class='sidenote'><sup class='sidenote-number'>1</sup> <a href="https://github.com/docker/docker/issues/8798">#8798</a> will add function to login to a specific user in <code>docker exec</code></span>
+<p>I choose to use its offical image to save my time. After it started, I sadly discoverd that I cloud only get <code>jenkins</code> user permission by running <code>docker exec</code> command.
+<sup class='sidenote-number'>1</sup><span class='sidenote'><sup class='sidenote-number'>1</sup> <a href="https://github.com/docker/docker/issues/8798">#8798</a> will add functions to login to a specific user in <code>docker exec</code></span>
 I have to use the method provided in it&#39;s github to install plugins (I use chef to help me previously), since I want to automate the &quot;install plugins&quot; process.</p>
 
-<p>It suggests you to add a plugins.txt file and run its script to install them.</p>
+<p>Its readme page suggests you to add a plugins.txt file and run its script to install them.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">#Dockerfile
 FROM jenkins
 COPY plugins.txt /usr/share/jenkins/plugins.txt
@@ -83,7 +83,7 @@ RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
 
 <p>However, it failed to install plugins.</p>
 
-<p>After digging for a while with <code>docker logs -f</code> and <code>docker exec</code>, I found, somehow, it can&#39;t download the right files of plugins.
+<p>After digging for a while with <code>docker logs -f</code> and <code>docker exec</code>, I found, somehow, it cloudn&#39;t download the right files of plugins.
 <sup class='sidenote-number'>2</sup><span class='sidenote'><sup class='sidenote-number'>2</sup> I will check this later since it&#39;s not essential</span></p>
 <div class="highlight"><pre><code class="language-" data-lang="">jenkins@jenkins2:/$ cat /var/jenkins_home/plugins/embeddable-build-status.hpi
 <span class="cp">&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;</span>
@@ -119,9 +119,8 @@ FROM jenkins
 # Copy Scripts
 COPY install-plugins.sh /var/jenkins_home/install-plugins.sh
 COPY update-index.sh /var/jenkins_home/update-index.sh
-
 </code></pre></div>
-<p>Build, Tag and run my image again:</p>
+<p>Build, tag and run my image again:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Run</span>
 docker run -d -p 8081:8080 -v /opt/docker_volumes/jenkins:/var/jenkins_home <span class="se">\</span>
   --name jenkins2 -h jenkins2 -t gankkank/jenkins:1.596.2
@@ -138,21 +137,21 @@ docker <span class="nb">exec</span> -t jenkins2 bash /var/jenkins_home/install-p
 <span class="c"># Restart</span>
 docker <span class="nb">exec</span> -t jenkins2 java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
 </code></pre></div>
-<p>Ok, That&#39;s done, seems no problem occured.</p>
+<p>Ok, That&#39;s done and it seems no problem occured.</p>
 
 <h3>Backup and Restore</h3>
 
-<p>Docker suggests start a volumn instance then start a new instance use volumn from it in <a href="https://docs.docker.com/userguide/dockervolumes/">Docker volumns</a> page. This helps us to backup and restore data without get hands dirty with Docker host (avoid host uid/gid matching to a container uid/gid, etc).
+<p>According to <a href="https://docs.docker.com/userguide/dockervolumes/">Docker volumns</a> page, Docker suggests us to create a volumn instance and then launch another instance to use volumn from the previous one. This helps us to backup and restore data without getting our hands dirty with Docker host (avoid matching the host uid/gid to a container uid/gid, etc).
 <sup class='sidenote-number'>4</sup><span class='sidenote'><sup class='sidenote-number'>4</sup> Blogs <a href="http://alvinhenrick.com/2015/01/26/docker-backup-and-restore-volume-container/">1</a>, <a href="https://medium.com/@ramangupta/why-docker-data-containers-are-good-589b3c6c749e">2</a></span></p>
 
-<p>So generally we will start two instances:</p>
+<p>In generally, we will start two instances:</p>
 <div class="highlight"><pre><code class="language-" data-lang=""># Create data volumn container (without -d)
 docker create -v /opt/docker_volumes/jenkins:/var/jenkins_home --name jenkins_home ubuntu /bin/true
 
 # Launch docker instance
 docker run -d -p 8083:8080 --volumes-from jenkins_home --name jenkins3 gankkank/jenkins:1.596.2
 </code></pre></div>
-<p>When we want to backup/restore the data, we will launch docker instances to do the task for us.</p>
+<p>When we want to backup/restore the data, we will launch docker instances to do the tasks for us.</p>
 <div class="highlight"><pre><code class="language-" data-lang=""># Backup
 docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
 
@@ -162,7 +161,7 @@ docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 tar xvf 
 </code></pre></div>
 <h3>Last</h3>
 
-<p>Finally ! Docker&#39;s way seems quite different from the traditional approach. Hopefully it will help us get things done easier.</p>
+<p>Finally, Docker&#39;s way seems a quite different way from the traditional one. Hopefully it will help us get things done easier.</p>
 
 
 

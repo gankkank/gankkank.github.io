@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Docker workflow, Part 1 Get Start</title>
-  <meta name="description" content="Docker Hub is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Check and remove ...">
+  <meta name="description" content="Docker Hub is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Please check and ...">
 
 
   <link rel="stylesheet" href="/css/tufte.css">	
@@ -51,7 +51,7 @@
 </p>
 
 
-<p><a href="https://hub.docker.com">Docker Hub</a> is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Check and remove your credentials before build images and push them to docker hub.</p>
+<p><a href="https://hub.docker.com">Docker Hub</a> is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Please check and remove your credentials before you build images and push them to docker hub.</p>
 
 <!--more-->
 
@@ -59,24 +59,15 @@
 
 <p>Get start to <a href="https://docs.docker.com/userguide/dockerimages/">work with docker images</a> by leveraging docker commands such as <code>docker pull</code>, <code>docker build</code>, <code>docker commit -m &quot;comments&quot; -a &quot;author&quot;</code>, <code>docker push</code></p>
 
-<p>Tags is handy to distinguish different image versions.</p>
+<p>Tags are handy to distinguish different image versions.</p>
 
-<p>Such as <code>docker pull ubuntu</code> will download the latest version of ubuntu and <code>docker pull ubuntu:14.04</code> will download the 14.04 version. So, you&#39;d better make sure that you have specified an image version in Dockerfile, otherwise, you may encounter problems when ubuntu haved updated it&#39;s latest version from 12.04 to 14.04.</p>
+<p>Such as <code>docker pull ubuntu</code> will download the latest version of ubuntu and <code>docker pull ubuntu:14.04</code> will download the 14.04 version. So, you&#39;d better make sure that you have specified an image version in Dockerfile, otherwise, you may encounter problems when ubuntu have updated its latest version from 12.04 to 14.04.</p>
 <div class="highlight"><pre><code class="language-" data-lang=""># Dockerfile
 FROM ubuntu:14.04
 </code></pre></div>
-<p>As showed by the docker documents, when working with docker hub:</p>
-
-<ol>
-<li>User pull a docker image to local</li>
-<li>User build the docker images locally (by using Dockerfile or login to the docker instance)</li>
-<li>User commit the changes</li>
-<li>User upload the docker image to their own path</li>
-</ol>
-
 <h2>My Workflow</h2>
 
-<p>When working with something is credential, we have to use servers to host our own services/data. We have a similiar worlflow compare to the public approach.</p>
+<p>When working with something credential, we have to use servers to host our own services/data. We have a similiar workflow compared to the public approach.</p>
 
 <p>We host our code using <a href="https://about.gitlab.com/downloads/">Gitlab CE</a> (Thanks Gitlab, it&#39;s a great project)</p>
 
