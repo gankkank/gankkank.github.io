@@ -6,12 +6,146 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 06 May 2015 00:27:44 +0800</pubDate>
-    <lastBuildDate>Wed, 06 May 2015 00:27:44 +0800</lastBuildDate>
+    <pubDate>Wed, 06 May 2015 21:52:19 +0800</pubDate>
+    <lastBuildDate>Wed, 06 May 2015 21:52:19 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
-        <title>Docker workflow</title>
+        <title>Docker workflow, Part 2 Jenkins</title>
+        <description>&lt;p&gt;We will discuss the technical details about implement our workflow. This time &amp;quot;Jenkins&amp;quot; first.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2&gt;Jenkins&lt;/h2&gt;
+
+&lt;p&gt;Jenkins provides an office docker image &lt;a href=&quot;https://registry.hub.docker.com/_/jenkins/&quot;&gt;jenkins:latest&lt;/a&gt; at Docker hub. You can find it&amp;#39;s git repository &lt;a href=&quot;https://github.com/jenkinsci/docker&quot;&gt;jenkinsci/docker&lt;/a&gt; at github.&lt;/p&gt;
+
+&lt;p&gt;My initial lifecycle events prepared for jenkins will be:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;#Lifecycle Events
+Start       : start jenkins with docker image with essential settings
+Deploy      : deploy the latest/needed plugins or configs I want
+Maintenance : backup/restore data
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Get It Run&lt;/h3&gt;
+
+&lt;p&gt;I choose to use it&amp;#39;s offical image to save my time. After started, I sadly discoverd that I can only get &lt;code&gt;jenkins&lt;/code&gt; user permission by run &lt;code&gt;docker exec&lt;/code&gt;.
+&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt; &lt;a href=&quot;https://github.com/docker/docker/issues/8798&quot;&gt;#8798&lt;/a&gt; will add function to login to a specific user in &lt;code&gt;docker exec&lt;/code&gt;&lt;/span&gt;
+I have to use the method provided in it&amp;#39;s github to install plugins (I use chef to help me previously), since I want to automate the &amp;quot;install plugins&amp;quot; process.&lt;/p&gt;
+
+&lt;p&gt;It suggests you to add a plugins.txt file and run its script to install them.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;#Dockerfile
+FROM jenkins
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So I built my image and started it.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker run -d -p 8080:8080 -v /opt/docker_volumes/jenkins:/var/jenkins_home --name jenkins1 -h jenkins1 gankkank/jenkins:1.596.2&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;However, it failed to install plugins.&lt;/p&gt;
+
+&lt;p&gt;After digging for a while with &lt;code&gt;docker logs -f&lt;/code&gt; and &lt;code&gt;docker exec&lt;/code&gt;, I found, somehow, it can&amp;#39;t download the right files of plugins.
+&lt;sup class=&#39;sidenote-number&#39;&gt;2&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;2&lt;/sup&gt; I will check this later since it&amp;#39;s not essential&lt;/span&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;jenkins@jenkins2:/$ cat /var/jenkins_home/plugins/embeddable-build-status.hpi
+&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;title&amp;gt;&lt;/span&gt;404 Not Found&lt;span class=&quot;nt&quot;&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;h1&amp;gt;&lt;/span&gt;Not Found&lt;span class=&quot;nt&quot;&gt;&amp;lt;/h1&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;p&amp;gt;&lt;/span&gt;The requested URL /plugins/embeddable-build-status//embeddable-build-status.hpi was not found on this server.&lt;span class=&quot;nt&quot;&gt;&amp;lt;/p&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;hr&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;address&amp;gt;&lt;/span&gt;Apache/2.2.14 (Ubuntu) Server at mirrors.jenkins-ci.org Port 80&lt;span class=&quot;nt&quot;&gt;&amp;lt;/address&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Deploy&lt;/h3&gt;
+
+&lt;p&gt;Since it&amp;#39;s not essential for me to prepare all plugins during the &amp;quot;Start&amp;quot; lifecycle, I will go with my approach.&lt;/p&gt;
+
+&lt;p&gt;Add Script to install plugins &lt;code&gt;install-plugins.sh&lt;/code&gt;
+&lt;sup class=&#39;sidenote-number&#39;&gt;3&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;3&lt;/sup&gt; Need second thought on this, using bash script is not quite a good idea&lt;/span&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Install plugins&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;plugin &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$@&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/  install-plugin &lt;span class=&quot;nv&quot;&gt;$plugin&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Add Script to update index. &lt;code&gt;update-index.sh&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+wget http://updates.jenkins-ci.org/update-center.json -qO- | sed &lt;span class=&quot;s1&quot;&gt;&#39;1d;$d&#39;&lt;/span&gt;  &amp;gt; /var/jenkins_home/updates/default.json
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then add in dockerfile:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;#Dockerfile
+FROM jenkins
+
+# Copy Scripts
+COPY install-plugins.sh /var/jenkins_home/install-plugins.sh
+COPY update-index.sh /var/jenkins_home/update-index.sh
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Build, Tag and run my image again:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Run&lt;/span&gt;
+docker run -d -p 8081:8080 -v /opt/docker_volumes/jenkins:/var/jenkins_home &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  --name jenkins2 -h jenkins2 -t gankkank/jenkins:1.596.2
+
+&lt;span class=&quot;c&quot;&gt;# Update Index&lt;/span&gt;
+docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 bash /var/jenkins_home/update-index.sh
+
+&lt;span class=&quot;c&quot;&gt;# Install Plugin&lt;/span&gt;
+docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 bash /var/jenkins_home/install-plugins.sh &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  git git-client ansicolor view-job-filters build-pipeline-plugin simple-theme-plugin &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  jquery dashboard-view jenkins-multijob-plugin warnings github rubyMetrics &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  AdaptivePlugin embeddable-build-status
+
+&lt;span class=&quot;c&quot;&gt;# Restart&lt;/span&gt;
+docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Ok, That&amp;#39;s done, seems no problem occured.&lt;/p&gt;
+
+&lt;h3&gt;Backup and Restore&lt;/h3&gt;
+
+&lt;p&gt;Docker suggests start a volumn instance then start a new instance use volumn from it in &lt;a href=&quot;https://docs.docker.com/userguide/dockervolumes/&quot;&gt;Docker volumns&lt;/a&gt; page. This helps us to backup and restore data without get hands dirty with Docker host (avoid host uid/gid matching to a container uid/gid, etc).
+&lt;sup class=&#39;sidenote-number&#39;&gt;4&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;4&lt;/sup&gt; Blogs &lt;a href=&quot;http://alvinhenrick.com/2015/01/26/docker-backup-and-restore-volume-container/&quot;&gt;1&lt;/a&gt;, &lt;a href=&quot;https://medium.com/@ramangupta/why-docker-data-containers-are-good-589b3c6c749e&quot;&gt;2&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;So generally we will start two instances:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# Create data volumn container (without -d)
+docker create -v /opt/docker_volumes/jenkins:/var/jenkins_home --name jenkins_home ubuntu /bin/true
+
+# Launch docker instance
+docker run -d -p 8083:8080 --volumes-from jenkins_home --name jenkins3 gankkank/jenkins:1.596.2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;When we want to backup/restore the data, we will launch docker instances to do the task for us.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# Backup
+docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
+
+# Restore. (After launch a new data container)
+docker create -v /opt/docker_volumes/jenkins_b:/var/jenkins_home --name jenkins_home_b ubuntu:14.04 /bin/true
+docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 tar xvf /backup/jenkins-2015-05-06.tar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Last&lt;/h3&gt;
+
+&lt;p&gt;Finally ! Docker&amp;#39;s way seems quite different from the traditional approach. Hopefully it will help us get things done easier.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 07 May 2015 07:00:00 +0800</pubDate>
+        <link>https://gankkank.github.io/articles/2015/05/07/docker-workflow-jenkins</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/07/docker-workflow-jenkins</guid>
+        
+        <category>docker</category>
+        
+        <category>jenkins</category>
+        
+        <category>continuous integration</category>
+        
+        <category>workflow</category>
+        
+        
+        <category>general</category>
+        
+        <category>guide</category>
+        
+      </item>
+    
+      <item>
+        <title>Docker workflow, Part 1 Get Start</title>
         <description>&lt;p&gt;&lt;a href=&quot;https://hub.docker.com&quot;&gt;Docker Hub&lt;/a&gt; is easy, fun and great to share your docker images to others. But you should be careful when you push your images to docker hub. Check and remove your credentials before build images and push them to docker hub.&lt;/p&gt;
 
 &lt;!--more--&gt;

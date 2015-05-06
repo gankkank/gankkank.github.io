@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Docker workflow, Part 2 Jenkins</title>
+  <meta name="description" content="We will discuss the technical details about implement our workflow. This time &quot;Jenkins&quot; first.">
+
+
+  <link rel="stylesheet" href="/css/tufte.css">	
+  
+
+  <!-- Google Fonts loaded here -->
+  <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+
+  <!-- Load up MathJax script if needed ... specify in /_data/options.yml file-->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+  <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/07/docker-workflow-jenkins">
+  <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
+</head>
+
+  <body>
+    <!--- Header and nav template site-wide -->
+<header>
+    <nav class="group">
+		<a href="/"><img class="badge" src="https://s.gravatar.com/avatar/e1cb6d2b55c8fee4549383ac99ec53e1?s=80" alt="CH"></a>
+		<a href="/page">A Page</a>
+		<a href="/about">About</a>
+	</nav>
+</header>
+
+    <article>
+      <h1>Docker workflow, part 2 jenkins</h1>
+<p>May 7, 2015</p>
+
+<p>
+
+<a># docker</a>
+
+<a># jenkins</a>
+
+<a># continuous integration</a>
+
+<a># workflow</a>
+
+</p>
+
+
+<p>We will discuss the technical details about implement our workflow. This time &quot;Jenkins&quot; first.</p>
+
+<!--more-->
+
+<h2>Jenkins</h2>
+
+<p>Jenkins provides an office docker image <a href="https://registry.hub.docker.com/_/jenkins/">jenkins:latest</a> at Docker hub. You can find it&#39;s git repository <a href="https://github.com/jenkinsci/docker">jenkinsci/docker</a> at github.</p>
+
+<p>My initial lifecycle events prepared for jenkins will be:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">#Lifecycle Events
+Start       : start jenkins with docker image with essential settings
+Deploy      : deploy the latest/needed plugins or configs I want
+Maintenance : backup/restore data
+</code></pre></div>
+<h3>Get It Run</h3>
+
+<p>I choose to use it&#39;s offical image to save my time. After started, I sadly discoverd that I can only get <code>jenkins</code> user permission by run <code>docker exec</code>.
+<sup class='sidenote-number'>1</sup><span class='sidenote'><sup class='sidenote-number'>1</sup> <a href="https://github.com/docker/docker/issues/8798">#8798</a> will add function to login to a specific user in <code>docker exec</code></span>
+I have to use the method provided in it&#39;s github to install plugins (I use chef to help me previously), since I want to automate the &quot;install plugins&quot; process.</p>
+
+<p>It suggests you to add a plugins.txt file and run its script to install them.</p>
+<div class="highlight"><pre><code class="language-" data-lang="">#Dockerfile
+FROM jenkins
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
+</code></pre></div>
+<p>So I built my image and started it.</p>
+
+<p><code>docker run -d -p 8080:8080 -v /opt/docker_volumes/jenkins:/var/jenkins_home --name jenkins1 -h jenkins1 gankkank/jenkins:1.596.2</code></p>
+
+<p>However, it failed to install plugins.</p>
+
+<p>After digging for a while with <code>docker logs -f</code> and <code>docker exec</code>, I found, somehow, it can&#39;t download the right files of plugins.
+<sup class='sidenote-number'>2</sup><span class='sidenote'><sup class='sidenote-number'>2</sup> I will check this later since it&#39;s not essential</span></p>
+<div class="highlight"><pre><code class="language-" data-lang="">jenkins@jenkins2:/$ cat /var/jenkins_home/plugins/embeddable-build-status.hpi
+<span class="cp">&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;</span>
+<span class="nt">&lt;html&gt;&lt;head&gt;</span>
+<span class="nt">&lt;title&gt;</span>404 Not Found<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;</span>Not Found<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;</span>The requested URL /plugins/embeddable-build-status//embeddable-build-status.hpi was not found on this server.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;hr&gt;</span>
+<span class="nt">&lt;address&gt;</span>Apache/2.2.14 (Ubuntu) Server at mirrors.jenkins-ci.org Port 80<span class="nt">&lt;/address&gt;</span>
+<span class="nt">&lt;/body&gt;&lt;/html&gt;</span>
+</code></pre></div>
+<h3>Deploy</h3>
+
+<p>Since it&#39;s not essential for me to prepare all plugins during the &quot;Start&quot; lifecycle, I will go with my approach.</p>
+
+<p>Add Script to install plugins <code>install-plugins.sh</code>
+<sup class='sidenote-number'>3</sup><span class='sidenote'><sup class='sidenote-number'>3</sup> Need second thought on this, using bash script is not quite a good idea</span></p>
+<div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
+<span class="c"># Install plugins</span>
+<span class="k">for </span>plugin <span class="k">in</span> <span class="nv">$@</span>; <span class="k">do
+  </span>java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/  install-plugin <span class="nv">$plugin</span>
+<span class="k">done</span>
+</code></pre></div>
+<p>Add Script to update index. <code>update-index.sh</code></p>
+<div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
+wget http://updates.jenkins-ci.org/update-center.json -qO- | sed <span class="s1">'1d;$d'</span>  &gt; /var/jenkins_home/updates/default.json
+</code></pre></div>
+<p>Then add in dockerfile:</p>
+<div class="highlight"><pre><code class="language-" data-lang="">#Dockerfile
+FROM jenkins
+
+# Copy Scripts
+COPY install-plugins.sh /var/jenkins_home/install-plugins.sh
+COPY update-index.sh /var/jenkins_home/update-index.sh
+
+</code></pre></div>
+<p>Build, Tag and run my image again:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Run</span>
+docker run -d -p 8081:8080 -v /opt/docker_volumes/jenkins:/var/jenkins_home <span class="se">\</span>
+  --name jenkins2 -h jenkins2 -t gankkank/jenkins:1.596.2
+
+<span class="c"># Update Index</span>
+docker <span class="nb">exec</span> -t jenkins2 bash /var/jenkins_home/update-index.sh
+
+<span class="c"># Install Plugin</span>
+docker <span class="nb">exec</span> -t jenkins2 bash /var/jenkins_home/install-plugins.sh <span class="se">\</span>
+  git git-client ansicolor view-job-filters build-pipeline-plugin simple-theme-plugin <span class="se">\</span>
+  jquery dashboard-view jenkins-multijob-plugin warnings github rubyMetrics <span class="se">\</span>
+  AdaptivePlugin embeddable-build-status
+
+<span class="c"># Restart</span>
+docker <span class="nb">exec</span> -t jenkins2 java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
+</code></pre></div>
+<p>Ok, That&#39;s done, seems no problem occured.</p>
+
+<h3>Backup and Restore</h3>
+
+<p>Docker suggests start a volumn instance then start a new instance use volumn from it in <a href="https://docs.docker.com/userguide/dockervolumes/">Docker volumns</a> page. This helps us to backup and restore data without get hands dirty with Docker host (avoid host uid/gid matching to a container uid/gid, etc).
+<sup class='sidenote-number'>4</sup><span class='sidenote'><sup class='sidenote-number'>4</sup> Blogs <a href="http://alvinhenrick.com/2015/01/26/docker-backup-and-restore-volume-container/">1</a>, <a href="https://medium.com/@ramangupta/why-docker-data-containers-are-good-589b3c6c749e">2</a></span></p>
+
+<p>So generally we will start two instances:</p>
+<div class="highlight"><pre><code class="language-" data-lang=""># Create data volumn container (without -d)
+docker create -v /opt/docker_volumes/jenkins:/var/jenkins_home --name jenkins_home ubuntu /bin/true
+
+# Launch docker instance
+docker run -d -p 8083:8080 --volumes-from jenkins_home --name jenkins3 gankkank/jenkins:1.596.2
+</code></pre></div>
+<p>When we want to backup/restore the data, we will launch docker instances to do the task for us.</p>
+<div class="highlight"><pre><code class="language-" data-lang=""># Backup
+docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
+
+# Restore. (After launch a new data container)
+docker create -v /opt/docker_volumes/jenkins_b:/var/jenkins_home --name jenkins_home_b ubuntu:14.04 /bin/true
+docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 tar xvf /backup/jenkins-2015-05-06.tar
+</code></pre></div>
+<h3>Last</h3>
+
+<p>Finally ! Docker&#39;s way seems quite different from the traditional approach. Hopefully it will help us get things done easier.</p>
+
+
+
+<br>
+<h3> Related Posts</h3>
+<div>
+<ul>
+
+<li><a href="/articles/2015/05/06/docker-workflow">Docker workflow, Part 1 Get Start</a></li>
+
+<li><a href="/articles/2015/05/05/docker-with-syslog">Docker with Runit, Part 2 Rsyslog</a></li>
+
+<li><a href="/articles/2015/05/04/docker-with-runit">Docker with Runit, Part 1 SSH</a></li>
+
+<li><a href="/articles/2015/05/02/get-start-with-jekyll">Get start with Jekyll and Github Pages !!</a></li>
+
+<ul>
+</div>
+
+
+    </article>
+    <span class="print-footer">Docker workflow, Part 2 Jenkins - May 7, 2015 - jimmy yang</span>
+    <footer>
+  <ul class="footer-links group">
+      <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    
+    
+      <li>
+        <a href="//www.twitter.com/gankkank"><span class="icon-twitter"></span></a>
+      </li>
+    
+      <li>
+        <a href="//github.com/gankkank"><span class="icon-github"></span></a>
+      </li>
+    
+      <li>
+        <a href="/feed.xml"><span class="icon-feed"></span></a>
+      </li>
+      
+  </ul>
+<div class="credits">
+<span>&copy; 2015 &nbsp;&nbsp;JIMMY YANG</span></br> 
+<span>This site created with the <a href="//github.com/clayh53/tufte-jekyll">Tufte theme for gankkank </a> in <a href="//jekyllrb.com">Jekyll</a>.</span> 
+</div>  
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-52890177-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</footer>
+
+  </body>
+</html>
