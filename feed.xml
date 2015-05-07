@@ -6,9 +6,137 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 07 May 2015 12:23:52 +0800</pubDate>
-    <lastBuildDate>Thu, 07 May 2015 12:23:52 +0800</lastBuildDate>
+    <pubDate>Thu, 07 May 2015 22:12:23 +0800</pubDate>
+    <lastBuildDate>Thu, 07 May 2015 22:12:23 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Docker workflow, Part 3: PHP APP</title>
+        <description>&lt;p&gt;Many of our applications are written in php language. So, I&amp;#39;m going to dockerize our php applications in this post.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2&gt;Start&lt;/h2&gt;
+
+&lt;p&gt;Docker provides a page &lt;a href=&quot;https://docs.docker.com/compose/wordpress/&quot;&gt;compose and wordpress&lt;/a&gt;. But the docker image &lt;a href=&quot;https://registry.hub.docker.com/u/orchardup/php5/dockerfile/&quot;&gt;orchardup/php5&lt;/a&gt; it used is using ubuntu 13.10 and doesn&amp;#39;t use php5-fpm. OMG, you&amp;#39;d be kidding me. &lt;/p&gt;
+
+&lt;p&gt;Thus, I have to build the nginx image and php5-fpm myself. I have several options to choose:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;Option 1: mount config volumes later when I start a container.
+Option 2: build configs within docker image
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And when I want web server and app server can talk with each other, I also have two choises: 1. two containers share a volume contains php5-fpm socket file. 2. use &lt;a href=&quot;https://docs.docker.com/userguide/dockerlinks/&quot;&gt;docker link&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;To simplify my task, I choose &amp;quot;build configs within docker image&amp;quot; and share a volume contains php5-fpm socket file bettween the web container and the app container.&lt;/p&gt;
+
+&lt;h2&gt;Build docker image for web server&lt;/h2&gt;
+
+&lt;p&gt;Dockerfile:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;FROM ubuntu:14.04
+
+RUN apt-get update &amp;amp;&amp;amp; apt-get install -y software-properties-common
+
+RUN \
+  add-apt-repository -y ppa:nginx/stable &amp;amp;&amp;amp; \
+  apt-get update &amp;amp;&amp;amp; \
+  apt-get install -y nginx &amp;amp;&amp;amp; \
+  rm -rf /var/lib/apt/lists/* &amp;amp;&amp;amp; \
+  echo &quot;\ndaemon off;&quot; &amp;gt;&amp;gt; /etc/nginx/nginx.conf &amp;amp;&amp;amp; \
+  chown -R www-data:www-data /var/lib/nginx
+
+# Clean up APT
+RUN apt-get clean &amp;amp;&amp;amp; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+COPY nginx.conf /etc/nginx/sites-enabled/default
+
+EXPOSE 80
+EXPOSE 443
+
+CMD [&quot;nginx&quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Build the nginx image:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker build -f Dockerfile.nginx -t &amp;quot;gankkank/ubuntu-trusty-nginx:latest&amp;quot; .&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2&gt;Build docker image for app server&lt;/h2&gt;
+
+&lt;p&gt;Dockerfile:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;FROM ubuntu:14.04
+# 
+RUN apt-get update &amp;amp;&amp;amp; apt-get install -y php5-fpm php5-mysql php5-gd
+
+COPY www.conf /etc/php5/fpm/pool.d/www.conf
+
+# Clean up APT
+RUN apt-get clean &amp;amp;&amp;amp; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+EXPOSE 9003
+ENTRYPOINT /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Build the php5-fpm image:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker build -f Dockerfile.php -t &amp;quot;gankkank/ubuntu-trusty-php5-fpm:latest&amp;quot; .&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Hack: nginx&amp;#39;s default path is changed to /opt/site/apps and php5-fpm&amp;#39;s socket path is changed to /opt/site/sock/php5-fpm-www.sock&lt;/p&gt;
+
+&lt;p&gt;Start a web container and an app container:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker run -d -v /opt/site:/opt/site -t gankkank/ubuntu-trusty-php5-fpm:latest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;docker run -d -p 8080:80 -v /opt/site:/opt/site -t gankkank/ubuntu-trusty-nginx:latest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Check ths result by creating sample files at &lt;code&gt;/opt/site/apps&lt;/code&gt; directory. &lt;code&gt;&amp;lt;?php phpinfo(); ?&amp;gt;&lt;/code&gt; should something. &lt;/p&gt;
+
+&lt;h2&gt;Docker-compose&lt;/h2&gt;
+
+&lt;p&gt;Docker &lt;a href=&quot;https://docs.docker.com/compose/yml/&quot;&gt;compose&lt;/a&gt; is provided as an alternative to &lt;a href=&quot;https://www.vagrantup.com/&quot;&gt;Vagrant&lt;/a&gt;. You can start containers by define them in a yaml file.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
+  image: gankkank/ubuntu-trusty-nginx:latest
+  ports:
+    - &quot;8000:80&quot;
+  volumes:
+    - /opt/site:/opt/site
+app:
+  image: gankkank/ubuntu-trusty-php5-fpm:latest
+  volumes:
+    - /opt/site:/opt/site
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Start all services as daemon: &lt;code&gt;docker-compose up -d&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;If you want to use docker link bettween a web container and a app container, change nginx config to use &lt;code&gt;fastcgi_pass app:9003&lt;/code&gt;. Docker will add their hostname/ip records to &lt;code&gt;/etc/hosts&lt;/code&gt; file in both containers.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
+  image: gankkank/ubuntu-trusty-nginx:latest
+  ports:
+    - &quot;8000:80&quot;
+  volumes:
+    - /opt/site:/opt/site
+app:
+  image: gankkank/ubuntu-trusty-php5-fpm:latest
+  volumes:
+    - /opt/site:/opt/site
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Another container maybe needed to help us install php libraries and update app version. Tools like &lt;a href=&quot;https://getcomposer.org/&quot;&gt;composer&lt;/a&gt; will be need. You can read &lt;a href=&quot;http://marmelab.com/blog/2014/09/10/make-docker-command.html&quot;&gt;1&lt;/a&gt;.&lt;/p&gt;
+</description>
+        <pubDate>Thu, 07 May 2015 07:00:00 +0800</pubDate>
+        <link>https://gankkank.github.io/articles/2015/05/07/docker-workflow-php-app</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/07/docker-workflow-php-app</guid>
+        
+        <category>docker</category>
+        
+        <category>php</category>
+        
+        <category>wordpress</category>
+        
+        <category>continuous integration</category>
+        
+        <category>workflow</category>
+        
+        
+        <category>general</category>
+        
+        <category>guide</category>
+        
+      </item>
     
       <item>
         <title>Docker workflow, Part 2: Jenkins</title>
