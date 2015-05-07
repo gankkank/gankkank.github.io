@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 07 May 2015 22:12:23 +0800</pubDate>
-    <lastBuildDate>Thu, 07 May 2015 22:12:23 +0800</lastBuildDate>
+    <pubDate>Thu, 07 May 2015 22:21:31 +0800</pubDate>
+    <lastBuildDate>Thu, 07 May 2015 22:21:31 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -18,7 +18,7 @@
 
 &lt;h2&gt;Start&lt;/h2&gt;
 
-&lt;p&gt;Docker provides a page &lt;a href=&quot;https://docs.docker.com/compose/wordpress/&quot;&gt;compose and wordpress&lt;/a&gt;. But the docker image &lt;a href=&quot;https://registry.hub.docker.com/u/orchardup/php5/dockerfile/&quot;&gt;orchardup/php5&lt;/a&gt; it used is using ubuntu 13.10 and doesn&amp;#39;t use php5-fpm. OMG, you&amp;#39;d be kidding me. &lt;/p&gt;
+&lt;p&gt;Docker provides a page &lt;a href=&quot;https://docs.docker.com/compose/wordpress/&quot;&gt;compose and wordpress&lt;/a&gt;. But the docker image &lt;a href=&quot;https://registry.hub.docker.com/u/orchardup/php5/dockerfile/&quot;&gt;orchardup/php5&lt;/a&gt; is build from ubuntu 13.10 without php5-fpm package installed. OMG, you&amp;#39;d be kidding me. &lt;/p&gt;
 
 &lt;p&gt;Thus, I have to build the nginx image and php5-fpm myself. I have several options to choose:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;Option 1: mount config volumes later when I start a container.
