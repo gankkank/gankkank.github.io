@@ -20,7 +20,7 @@
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
-  <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/07/docker-workflow-php-app">
+  <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/08/docker-workflow-php-app">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
 </head>
 
@@ -36,7 +36,7 @@
 
     <article>
       <h1>Docker workflow, part 3: php app</h1>
-<p>May 7, 2015</p>
+<p>May 8, 2015</p>
 
 <p>
 
@@ -144,7 +144,7 @@ app:
 </code></pre></div>
 <p>Start all container as daemon: <code>docker-compose up -d</code></p>
 
-<p>If you want to use docker link between a web container and a app container, please change nginx config to use <code>fastcgi_pass app:9003</code>. And docker will add their hostname/ip records to <code>/etc/hosts</code> file in both containers.</p>
+<p>If you want to use docker link between a web container and an app container, please change nginx config to use <code>fastcgi_pass app:9003</code>. And docker will add their hostname/ip records to <code>/etc/hosts</code> file in both containers.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">web:
   image: gankkank/ubuntu-trusty-nginx:latest
   ports:
@@ -156,7 +156,7 @@ app:
   volumes:
     - /opt/site:/opt/site
 </code></pre></div>
-<p>Another container may be needed to help us install php libraries and update app versions. Tools like <a href="https://getcomposer.org/">composer</a> will be useful. Many people also choose HHVM rather than PHP5-FPM. You can read the blog <a href="http://marmelab.com/blog/2014/09/10/make-docker-command.html">1</a> to build a image by yourself.</p>
+<p>Another container may be needed to help us install php libraries and update app versions. Tools like <a href="https://getcomposer.org/">composer</a> will be useful. Many people also choose HHVM rather than PHP5-FPM. For more information please refer to the blog <a href="http://marmelab.com/blog/2014/09/10/make-docker-command.html">1</a> to build a image by yourself.</p>
 
 
 
@@ -180,7 +180,7 @@ app:
 
 
     </article>
-    <span class="print-footer">Docker workflow, Part 3: PHP APP - May 7, 2015 - jimmy yang</span>
+    <span class="print-footer">Docker workflow, Part 3: PHP APP - May 8, 2015 - jimmy yang</span>
     <footer>
   <ul class="footer-links group">
       <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    

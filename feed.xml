@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 07 May 2015 22:42:57 +0800</pubDate>
-    <lastBuildDate>Thu, 07 May 2015 22:42:57 +0800</lastBuildDate>
+    <pubDate>Thu, 07 May 2015 22:47:14 +0800</pubDate>
+    <lastBuildDate>Thu, 07 May 2015 22:47:14 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -103,7 +103,7 @@ app:
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Start all container as daemon: &lt;code&gt;docker-compose up -d&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;If you want to use docker link between a web container and a app container, please change nginx config to use &lt;code&gt;fastcgi_pass app:9003&lt;/code&gt;. And docker will add their hostname/ip records to &lt;code&gt;/etc/hosts&lt;/code&gt; file in both containers.&lt;/p&gt;
+&lt;p&gt;If you want to use docker link between a web container and an app container, please change nginx config to use &lt;code&gt;fastcgi_pass app:9003&lt;/code&gt;. And docker will add their hostname/ip records to &lt;code&gt;/etc/hosts&lt;/code&gt; file in both containers.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
   image: gankkank/ubuntu-trusty-nginx:latest
   ports:
@@ -115,11 +115,11 @@ app:
   volumes:
     - /opt/site:/opt/site
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Another container may be needed to help us install php libraries and update app versions. Tools like &lt;a href=&quot;https://getcomposer.org/&quot;&gt;composer&lt;/a&gt; will be useful. Many people also choose HHVM rather than PHP5-FPM. You can read the blog &lt;a href=&quot;http://marmelab.com/blog/2014/09/10/make-docker-command.html&quot;&gt;1&lt;/a&gt; to build a image by yourself.&lt;/p&gt;
+&lt;p&gt;Another container may be needed to help us install php libraries and update app versions. Tools like &lt;a href=&quot;https://getcomposer.org/&quot;&gt;composer&lt;/a&gt; will be useful. Many people also choose HHVM rather than PHP5-FPM. For more information please refer to the blog &lt;a href=&quot;http://marmelab.com/blog/2014/09/10/make-docker-command.html&quot;&gt;1&lt;/a&gt; to build a image by yourself.&lt;/p&gt;
 </description>
-        <pubDate>Thu, 07 May 2015 07:00:00 +0800</pubDate>
-        <link>https://gankkank.github.io/articles/2015/05/07/docker-workflow-php-app</link>
-        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/07/docker-workflow-php-app</guid>
+        <pubDate>Fri, 08 May 2015 07:00:00 +0800</pubDate>
+        <link>https://gankkank.github.io/articles/2015/05/08/docker-workflow-php-app</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/08/docker-workflow-php-app</guid>
         
         <category>docker</category>
         

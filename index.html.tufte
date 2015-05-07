@@ -41,8 +41,8 @@
     
       <li class="listing">
       	<hr class="slender">
-      	<a href="/articles/2015/05/07/docker-workflow-php-app"><h4 class="contrast">Docker workflow, Part 3: PHP APP</h4></a>
-      	<span class="smaller">May 7, 2015</span>  <br/>
+      	<a href="/articles/2015/05/08/docker-workflow-php-app"><h4 class="contrast">Docker workflow, Part 3: PHP APP</h4></a>
+      	<span class="smaller">May 8, 2015</span>  <br/>
 		<div><p>Many of our applications are written in php language. So, I&#39;m going to dockerize our php applications in this post.</p>
 </div>
 		
