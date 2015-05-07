@@ -70,6 +70,9 @@
 </code></pre></div>
 <p>Then, To interactive with docker instance:</p>
 <div class="highlight"><pre><code class="language-" data-lang="">docker run -i -t debian /bin/bash
+
+# run with --rm to clean up the container after it exit
+docker run --rm -i -t debian /bin/bash
 </code></pre></div>
 <p>The docker instance will exit after you hit the <code>exit</code> command. Docker also have commands to run a process as daemon but we will discuss how to use runit to launch ssh process. </p>
 

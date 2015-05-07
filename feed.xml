@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 06 May 2015 22:59:32 +0800</pubDate>
-    <lastBuildDate>Wed, 06 May 2015 22:59:32 +0800</lastBuildDate>
+    <pubDate>Thu, 07 May 2015 12:23:52 +0800</pubDate>
+    <lastBuildDate>Thu, 07 May 2015 12:23:52 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -96,7 +96,8 @@ docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 bash /var/
   AdaptivePlugin embeddable-build-status
 
 &lt;span class=&quot;c&quot;&gt;# Restart&lt;/span&gt;
-docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
+docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+    java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Ok, That&amp;#39;s done and it seems no problem occured.&lt;/p&gt;
 
@@ -114,12 +115,18 @@ docker run -d -p 8083:8080 --volumes-from jenkins_home --name jenkins3 gankkank/
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;When we want to backup/restore the data, we will launch docker instances to do the tasks for us.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# Backup
-docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
+docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar \
+    cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
 
 # Restore. (After launch a new data container)
-docker create -v /opt/docker_volumes/jenkins_b:/var/jenkins_home --name jenkins_home_b ubuntu:14.04 /bin/true
-docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 tar xvf /backup/jenkins-2015-05-06.tar
+docker create -v /opt/docker_volumes/jenkins_b:/var/jenkins_home \
+    --name jenkins_home_b ubuntu:14.04 /bin/true
+
+docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 \
+    tar xvf /backup/jenkins-2015-05-06.tar
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;By default, the container&amp;#39;s file system persists after the container exits. So, you&amp;#39;d better run backup/restore with --rm option.&lt;/p&gt;
+
 &lt;h3&gt;Last&lt;/h3&gt;
 
 &lt;p&gt;Finally, Docker&amp;#39;s way seems a quite different way from the traditional one. Hopefully it will help us get things done easier.&lt;/p&gt;
@@ -318,6 +325,9 @@ runsvdir---runsv---rsyslogd-+-{in:imuxsock}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then, To interactive with docker instance:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;docker run -i -t debian /bin/bash
+
+# run with --rm to clean up the container after it exit
+docker run --rm -i -t debian /bin/bash
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The docker instance will exit after you hit the &lt;code&gt;exit&lt;/code&gt; command. Docker also have commands to run a process as daemon but we will discuss how to use runit to launch ssh process. &lt;/p&gt;
 

@@ -135,7 +135,8 @@ docker <span class="nb">exec</span> -t jenkins2 bash /var/jenkins_home/install-p
   AdaptivePlugin embeddable-build-status
 
 <span class="c"># Restart</span>
-docker <span class="nb">exec</span> -t jenkins2 java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
+docker <span class="nb">exec</span> -t jenkins2 <span class="se">\</span>
+    java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ restart
 </code></pre></div>
 <p>Ok, That&#39;s done and it seems no problem occured.</p>
 
@@ -153,12 +154,18 @@ docker run -d -p 8083:8080 --volumes-from jenkins_home --name jenkins3 gankkank/
 </code></pre></div>
 <p>When we want to backup/restore the data, we will launch docker instances to do the tasks for us.</p>
 <div class="highlight"><pre><code class="language-" data-lang=""># Backup
-docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
+docker run --volumes-from jenkins_home -v $(pwd):/backup ubuntu:14.04 tar \
+    cvf /backup/jenkins-2015-05-06.tar /var/jenkins_home
 
 # Restore. (After launch a new data container)
-docker create -v /opt/docker_volumes/jenkins_b:/var/jenkins_home --name jenkins_home_b ubuntu:14.04 /bin/true
-docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 tar xvf /backup/jenkins-2015-05-06.tar
+docker create -v /opt/docker_volumes/jenkins_b:/var/jenkins_home \
+    --name jenkins_home_b ubuntu:14.04 /bin/true
+
+docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 \
+    tar xvf /backup/jenkins-2015-05-06.tar
 </code></pre></div>
+<p>By default, the container&#39;s file system persists after the container exits. So, you&#39;d better run backup/restore with --rm option.</p>
+
 <h3>Last</h3>
 
 <p>Finally, Docker&#39;s way seems a quite different way from the traditional one. Hopefully it will help us get things done easier.</p>
