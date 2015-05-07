@@ -59,7 +59,7 @@
 
 <h2>Start</h2>
 
-<p>Docker provides a page <a href="https://docs.docker.com/compose/wordpress/">compose and wordpress</a>. But the docker image <a href="https://registry.hub.docker.com/u/orchardup/php5/dockerfile/">orchardup/php5</a> is build from ubuntu 13.10 without php5-fpm package installed. OMG, you&#39;d be kidding me. </p>
+<p>Docker provides us with a <a href="https://docs.docker.com/compose/wordpress/">compose and wordpress</a> page. But the docker image <a href="https://registry.hub.docker.com/u/orchardup/php5/dockerfile/">orchardup/php5</a> is built from ubuntu 13.10 without php5-fpm package installed. OMG, you&#39;d be kidding me. </p>
 
 <p>Thus, I have to build the nginx image and php5-fpm myself. There are several options to choose:</p>
 <div class="highlight"><pre><code class="language-" data-lang="">Option 1: mount config volumes later when I start a container.
