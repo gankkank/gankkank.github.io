@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 08 May 2015 23:42:19 +0800</pubDate>
-    <lastBuildDate>Fri, 08 May 2015 23:42:19 +0800</lastBuildDate>
+    <pubDate>Fri, 08 May 2015 23:46:03 +0800</pubDate>
+    <lastBuildDate>Fri, 08 May 2015 23:46:03 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -42,9 +42,9 @@
 &lt;li&gt;&amp;quot;Cluster&amp;quot;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;It is an EC2 instance pool. The EC2 instances will auto join the cluster by it&amp;#39;s container agent.&lt;/p&gt;
+&lt;p&gt;It is an EC2 instance pool. The EC2 instances will auto join the cluster by its container agent.&lt;/p&gt;
 
-&lt;p&gt;For details, please refers to &lt;a href=&quot;http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html&quot;&gt;&amp;quot;Getting Started with Amazon ECS&amp;quot;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;For details, please refer to &lt;a href=&quot;http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html&quot;&gt;&amp;quot;Getting Started with Amazon ECS&amp;quot;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2&gt;Customization&lt;/h2&gt;
 
