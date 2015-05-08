@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Launch wordpress in AWS EC2 Container Service</title>
+  <meta name="description" content="Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you...">
+
+
+  <link rel="stylesheet" href="/css/tufte.css">	
+  
+
+  <!-- Google Fonts loaded here -->
+  <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+
+  <!-- Load up MathJax script if needed ... specify in /_data/options.yml file-->
+  
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+  <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/09/aws-ecs">
+  <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
+</head>
+
+  <body>
+    <!--- Header and nav template site-wide -->
+<header>
+    <nav class="group">
+		<a href="/"><img class="badge" src="https://s.gravatar.com/avatar/e1cb6d2b55c8fee4549383ac99ec53e1?s=80" alt="CH"></a>
+		<a href="/page">A Page</a>
+		<a href="/about">About</a>
+	</nav>
+</header>
+
+    <article>
+      <h1>Launch wordpress in aws ec2 container service</h1>
+<p>May 9, 2015</p>
+
+<p>
+
+<a># docker</a>
+
+<a># AWS ECS</a>
+
+<a># wordpress</a>
+
+</p>
+
+
+<p>Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you manage docker containers running in EC2 instances.</p>
+
+<!--more-->
+
+<p>If you are using &quot;Amazon ECS sample&quot; task definition to launch ECS service during the &quot;get started&quot; tutorail, AWS will use cloudformation template to launch all components needed.</p>
+
+<p>Like AWS EC2 service, you are responsible to prepare the VPC(s), Security Group(s), IAM Role(s) and optional ELB(s) when you are planning to create a custom cluster.</p>
+
+<h2>Definitions</h2>
+
+<p>There are several terms used by ECS:</p>
+
+<ul>
+<li>&quot;Task&quot;</li>
+</ul>
+
+<p>It is used to define container settings. One task per one EC2 instance.</p>
+
+<p>For instance, in order to run wordpress, I need to define three container settings in a task named &quot;prod-wordpress&quot;, one docker run nginx, another one run php5-fpm and the last one run a data volume. AWS ECS will start three docker containers in one EC2 instance after I run the task.</p>
+
+<ul>
+<li>&quot;Service&quot; </li>
+</ul>
+
+<p>It is used to define which task to run, where to run it (in which ECS cluster) and how many tasks run. ELB can be used to load balance a sepecific port.</p>
+
+<ul>
+<li>&quot;Cluster&quot;</li>
+</ul>
+
+<p>It is an EC2 instance pool. The container agent installed in the EC2 instance will register the EC2 instance to the cluster defined in it&#39;s config.</p>
+
+<p>For details, please refers to <a href="http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html">&quot;Getting Started with Amazon ECS&quot;</a></p>
+
+<h2>Customization</h2>
+
+<p>In order to launch my own &quot;wordpress&quot; project, I choose to create the infrastructure from scrach. Following as a summary (production and stagging environment in the same VPC), ensure high availability of wordpress by defining subnets accross multiple AZs:</p>
+<div class="highlight"><pre><code class="language-yml" data-lang="yml"><span class="s">vpc</span><span class="pi">:</span>
+  <span class="s2">"</span><span class="s">wordpress"</span><span class="pi">:</span>
+    <span class="s">cidr</span><span class="pi">:</span> <span class="s">10.10.0.0/16</span>
+<span class="s">subnets</span><span class="pi">:</span>
+  <span class="s2">"</span><span class="s">wordpress-web1"</span><span class="pi">:</span>
+    <span class="s">cidr</span><span class="pi">:</span> <span class="s">10.10.1.0/24</span>
+    <span class="s">az</span><span class="pi">:</span> <span class="s">a</span>
+  <span class="s2">"</span><span class="s">wordpress-web2"</span><span class="pi">:</span>
+    <span class="s">cidr</span><span class="pi">:</span> <span class="s">10.10.2.0/24</span>
+    <span class="s">az</span><span class="pi">:</span> <span class="s">b</span>
+  <span class="s2">"</span><span class="s">wordpress-db1"</span><span class="pi">:</span>
+    <span class="s">cidr</span><span class="pi">:</span> <span class="s">10.10.10.0/24</span>
+    <span class="s">az</span><span class="pi">:</span> <span class="s">a</span>
+  <span class="s2">"</span><span class="s">wordpress-db2"</span><span class="pi">:</span>
+    <span class="s">cidr</span><span class="pi">:</span> <span class="s">10.10.11.0/24</span>
+    <span class="s">az</span><span class="pi">:</span> <span class="s">b</span>
+<span class="s">security_groups</span><span class="pi">:</span>
+  <span class="s2">"</span><span class="s">prod-wordpress-elb"</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">tcp:80:cidr:0.0.0.0/0"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">tcp:443:cidr:0.0.0.0/0"</span>
+  <span class="s2">"</span><span class="s">prod-wordpress-web"</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">tcp:80:ref:prod-wordpress-elb"</span>
+  <span class="s2">"</span><span class="s">prod-wordpress-db"</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">tcp:3306:ref:prod-wordpress-web"</span>
+<span class="s">iam_roles</span><span class="pi">:</span>
+  <span class="s2">"</span><span class="s">prod-wordpress-web"</span><span class="pi">:</span>
+    <span class="s2">"</span><span class="s">s3-upload"</span><span class="pi">:</span>
+      <span class="s">action</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">s3:*"</span>
+      <span class="s">resource</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">arn:aws:s3:::prod-wordpress/upload"</span> 
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">arn:aws:s3:::prod-wordpress/upload/*"</span> 
+</code></pre></div>
+<p>Then create the following:</p>
+
+<p>1) An EC2 auto scaling group using subnets &quot;wordpress-web1&quot; and &quot;wordpress-web2&quot;, security group &quot;prod-wordpress-web&quot; and IAM role &quot;prod-wordpress-web&quot;. Those EC2 instances will auto join EC2 cluster named &quot;default&quot;.</p>
+
+<p>2) A RDS instance using subnets &quot;wordpress-db1&quot; and &quot;wordpress-db2&quot;, security group &quot;prod-wordpress-db&quot;.</p>
+
+<p>3) An ELB using subnets &quot;wordpress-web1&quot; and &quot;wordpress-web2&quot;, security group &quot;prod-wordpress-elb&quot;</p>
+
+<h2>Luanch wordpress web service</h2>
+
+<p>Using docker definition in my previous post.</p>
+<div class="highlight"><pre><code class="language-" data-lang="">web:
+  image: gankkank/ubuntu-trusty-nginx:latest
+  ports:
+    - "80:80"
+  volumes_from:
+    - code
+app:
+  image: gankkank/ubuntu-trusty-php5-fpm:latest
+  volumes_from:
+    - code
+code:
+  volumes:
+    - /opt/site:/opt/site
+</code></pre></div>
+
+
+<br>
+<h3> Related Posts</h3>
+<div>
+<ul>
+
+<li><a href="/articles/2015/05/08/docker-workflow-php-app">Docker workflow, Part 3: PHP APP</a></li>
+
+<li><a href="/articles/2015/05/07/docker-workflow-jenkins">Docker workflow, Part 2: Jenkins</a></li>
+
+<li><a href="/articles/2015/05/06/docker-workflow">Docker workflow, Part 1: Get Start</a></li>
+
+<li><a href="/articles/2015/05/05/docker-with-syslog">Docker with Runit, Part 2: Rsyslog</a></li>
+
+<li><a href="/articles/2015/05/04/docker-with-runit">Docker with Runit, Part 1: SSH</a></li>
+
+<ul>
+</div>
+
+
+    </article>
+    <span class="print-footer">Launch wordpress in AWS EC2 Container Service - May 9, 2015 - jimmy yang</span>
+    <footer>
+  <ul class="footer-links group">
+      <li><a href="mailto:gankkank@gmail.com"><span class="icon-mail"></span></a></li>    
+    
+      <li>
+        <a href="//www.twitter.com/gankkank"><span class="icon-twitter"></span></a>
+      </li>
+    
+      <li>
+        <a href="//github.com/gankkank"><span class="icon-github"></span></a>
+      </li>
+    
+      <li>
+        <a href="/feed.xml"><span class="icon-feed"></span></a>
+      </li>
+      
+  </ul>
+<div class="credits">
+<span>&copy; 2015 &nbsp;&nbsp;JIMMY YANG</span></br> 
+<span>This site created with the <a href="//github.com/clayh53/tufte-jekyll">Tufte theme for gankkank </a> in <a href="//jekyllrb.com">Jekyll</a>.</span> 
+</div>  
+<script>
+  var host = "gankkank.github.io";
+  if (window.location.host == host && window.location.protocol != "https:") {
+    window.location.protocol = "https:";
+  };
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-52890177-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<a title="Real Time Analytics" href="http://clicky.com/100842226"><img alt="Real Time Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+<script type="text/javascript">
+var clicky_site_ids = clicky_site_ids || [];
+clicky_site_ids.push(100842226);
+(function() {
+  var s = document.createElement('script');
+  s.type = 'text/javascript';
+  s.async = true;
+  s.src = '//static.getclicky.com/js';
+  ( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild( s );
+})();
+</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+</footer>
+
+  </body>
+</html>

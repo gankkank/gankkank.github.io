@@ -6,9 +6,123 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 08 May 2015 18:18:53 +0800</pubDate>
-    <lastBuildDate>Fri, 08 May 2015 18:18:53 +0800</lastBuildDate>
+    <pubDate>Fri, 08 May 2015 23:04:13 +0800</pubDate>
+    <lastBuildDate>Fri, 08 May 2015 23:04:13 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Launch wordpress in AWS EC2 Container Service</title>
+        <description>&lt;p&gt;Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you manage docker containers running in EC2 instances.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;If you are using &amp;quot;Amazon ECS sample&amp;quot; task definition to launch ECS service during the &amp;quot;get started&amp;quot; tutorail, AWS will use cloudformation template to launch all components needed.&lt;/p&gt;
+
+&lt;p&gt;Like AWS EC2 service, you are responsible to prepare the VPC(s), Security Group(s), IAM Role(s) and optional ELB(s) when you are planning to create a custom cluster.&lt;/p&gt;
+
+&lt;h2&gt;Definitions&lt;/h2&gt;
+
+&lt;p&gt;There are several terms used by ECS:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&amp;quot;Task&amp;quot;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is used to define container settings. One task per one EC2 instance.&lt;/p&gt;
+
+&lt;p&gt;For instance, in order to run wordpress, I need to define three container settings in a task named &amp;quot;prod-wordpress&amp;quot;, one docker run nginx, another one run php5-fpm and the last one run a data volume. AWS ECS will start three docker containers in one EC2 instance after I run the task.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&amp;quot;Service&amp;quot; &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is used to define which task to run, where to run it (in which ECS cluster) and how many tasks run. ELB can be used to load balance a sepecific port.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&amp;quot;Cluster&amp;quot;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is an EC2 instance pool. The container agent installed in the EC2 instance will register the EC2 instance to the cluster defined in it&amp;#39;s config.&lt;/p&gt;
+
+&lt;p&gt;For details, please refers to &lt;a href=&quot;http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html&quot;&gt;&amp;quot;Getting Started with Amazon ECS&amp;quot;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Customization&lt;/h2&gt;
+
+&lt;p&gt;In order to launch my own &amp;quot;wordpress&amp;quot; project, I choose to create the infrastructure from scrach. Following as a summary (production and stagging environment in the same VPC), ensure high availability of wordpress by defining subnets accross multiple AZs:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span class=&quot;s&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wordpress&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;cidr&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.10.0.0/16&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;subnets&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wordpress-web1&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;cidr&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.10.1.0/24&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;az&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;a&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wordpress-web2&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;cidr&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.10.2.0/24&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;az&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;b&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wordpress-db1&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;cidr&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.10.10.0/24&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;az&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;a&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wordpress-db2&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;cidr&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.10.11.0/24&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;az&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;b&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;security_groups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;prod-wordpress-elb&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;tcp:80:cidr:0.0.0.0/0&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;tcp:443:cidr:0.0.0.0/0&quot;&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;prod-wordpress-web&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;tcp:80:ref:prod-wordpress-elb&quot;&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;prod-wordpress-db&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;tcp:3306:ref:prod-wordpress-web&quot;&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;iam_roles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;prod-wordpress-web&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s3-upload&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s3:*&quot;&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;arn:aws:s3:::prod-wordpress/upload&quot;&lt;/span&gt; 
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;arn:aws:s3:::prod-wordpress/upload/*&quot;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then create the following:&lt;/p&gt;
+
+&lt;p&gt;1) An EC2 auto scaling group using subnets &amp;quot;wordpress-web1&amp;quot; and &amp;quot;wordpress-web2&amp;quot;, security group &amp;quot;prod-wordpress-web&amp;quot; and IAM role &amp;quot;prod-wordpress-web&amp;quot;. Those EC2 instances will auto join EC2 cluster named &amp;quot;default&amp;quot;.&lt;/p&gt;
+
+&lt;p&gt;2) A RDS instance using subnets &amp;quot;wordpress-db1&amp;quot; and &amp;quot;wordpress-db2&amp;quot;, security group &amp;quot;prod-wordpress-db&amp;quot;.&lt;/p&gt;
+
+&lt;p&gt;3) An ELB using subnets &amp;quot;wordpress-web1&amp;quot; and &amp;quot;wordpress-web2&amp;quot;, security group &amp;quot;prod-wordpress-elb&amp;quot;&lt;/p&gt;
+
+&lt;h2&gt;Luanch wordpress web service&lt;/h2&gt;
+
+&lt;p&gt;Using docker definition in my previous post.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
+  image: gankkank/ubuntu-trusty-nginx:latest
+  ports:
+    - &quot;80:80&quot;
+  volumes_from:
+    - code
+app:
+  image: gankkank/ubuntu-trusty-php5-fpm:latest
+  volumes_from:
+    - code
+code:
+  volumes:
+    - /opt/site:/opt/site
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        <pubDate>Sat, 09 May 2015 07:00:00 +0800</pubDate>
+        <link>https://gankkank.github.io/articles/2015/05/09/aws-ecs</link>
+        <guid isPermaLink="true">https://gankkank.github.io/articles/2015/05/09/aws-ecs</guid>
+        
+        <category>docker</category>
+        
+        <category>AWS ECS</category>
+        
+        <category>wordpress</category>
+        
+        
+        <category>general</category>
+        
+        <category>guide</category>
+        
+      </item>
     
       <item>
         <title>Docker workflow, Part 3: PHP APP</title>
