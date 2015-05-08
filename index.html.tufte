@@ -43,7 +43,7 @@
       	<hr class="slender">
       	<a href="/articles/2015/05/09/aws-ecs"><h4 class="contrast">Launch wordpress in AWS EC2 Container Service</h4></a>
       	<span class="smaller">May 9, 2015</span>  <br/>
-		<div><p>Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you manage docker containers running in EC2 instances.</p>
+		<div><p>Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without Singapo region currently). In short, It lets you manage docker containers running in EC2 instances.</p>
 </div>
 		
       </li>

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Launch wordpress in AWS EC2 Container Service</title>
-  <meta name="description" content="Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you...">
+  <meta name="description" content="Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without Singapo region currently). In short, It lets you...">
 
 
   <link rel="stylesheet" href="/css/tufte.css">	
@@ -49,11 +49,11 @@
 </p>
 
 
-<p>Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you manage docker containers running in EC2 instances.</p>
+<p>Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without Singapo region currently). In short, It lets you manage docker containers running in EC2 instances.</p>
 
 <!--more-->
 
-<p>If you are using &quot;Amazon ECS sample&quot; task definition to launch ECS service during the &quot;get started&quot; tutorail, AWS will use cloudformation template to launch all components needed.</p>
+<p>If you are leveraging &quot;Amazon ECS sample&quot; task definition to create ECS service during the &quot;get started&quot; tutorail, AWS will use cloudformation template to launch all components needed.</p>
 
 <p>Like AWS EC2 service, you are responsible to prepare the VPC(s), Security Group(s), IAM Role(s) and optional ELB(s) when you are planning to create a custom cluster.</p>
 
@@ -65,27 +65,27 @@
 <li>&quot;Task&quot;</li>
 </ul>
 
-<p>It is used to define container settings. One task per one EC2 instance.</p>
+<p>It is used to define container settings. One task per EC2 instance.</p>
 
-<p>For instance, in order to run wordpress, I need to define three container settings in a task named &quot;prod-wordpress&quot;, one docker run nginx, another one run php5-fpm and the last one run a data volume. AWS ECS will start three docker containers in one EC2 instance after I run the task.</p>
+<p>For example, in order to run wordpress, I need to define three container settings in a task named &quot;prod-wordpress&quot;, one docker to run nginx, another to run php5-fpm and the last to create a data volume. AWS ECS will start three docker containers in one EC2 instance after I run the task.</p>
 
 <ul>
 <li>&quot;Service&quot; </li>
 </ul>
 
-<p>It is used to define which task to run, where to run it (in which ECS cluster) and how many tasks run. ELB can be used to load balance a sepecific port.</p>
+<p>It is used to define which task to run, where to run it (in which ECS cluster) and how many tasks run. ELB can be used to load balance requests sent to a specific port.</p>
 
 <ul>
 <li>&quot;Cluster&quot;</li>
 </ul>
 
-<p>It is an EC2 instance pool. The container agent installed in the EC2 instance will register the EC2 instance to the cluster defined in it&#39;s config.</p>
+<p>It is an EC2 instance pool. The EC2 instances will auto join the cluster by it&#39;s container agent.</p>
 
 <p>For details, please refers to <a href="http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html">&quot;Getting Started with Amazon ECS&quot;</a></p>
 
 <h2>Customization</h2>
 
-<p>In order to launch my own &quot;wordpress&quot; project, I choose to create the infrastructure from scrach. Following as a summary (production and stagging environment in the same VPC), ensure high availability of wordpress by defining subnets accross multiple AZs:</p>
+<p>In order to launch my own &quot;wordpress&quot; project, I choose to create the infrastructure from scrach. Following this a summary (it will ensures high availability of wordpress by defining subnets accross multiple AZs):</p>
 <div class="highlight"><pre><code class="language-yml" data-lang="yml"><span class="s">vpc</span><span class="pi">:</span>
   <span class="s2">"</span><span class="s">wordpress"</span><span class="pi">:</span>
     <span class="s">cidr</span><span class="pi">:</span> <span class="s">10.10.0.0/16</span>
@@ -127,7 +127,7 @@
 
 <p>3) An ELB using subnets &quot;wordpress-web1&quot; and &quot;wordpress-web2&quot;, security group &quot;prod-wordpress-elb&quot;</p>
 
-<h2>Luanch wordpress web service</h2>
+<h2>Luanch wordpress service</h2>
 
 <p>Using docker definition in my previous post.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">web:

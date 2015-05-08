@@ -6,17 +6,17 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 08 May 2015 23:04:13 +0800</pubDate>
-    <lastBuildDate>Fri, 08 May 2015 23:04:13 +0800</lastBuildDate>
+    <pubDate>Fri, 08 May 2015 23:42:19 +0800</pubDate>
+    <lastBuildDate>Fri, 08 May 2015 23:42:19 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
         <title>Launch wordpress in AWS EC2 Container Service</title>
-        <description>&lt;p&gt;Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without singapo region currently). In short, It lets you manage docker containers running in EC2 instances.&lt;/p&gt;
+        <description>&lt;p&gt;Amazon Web Service (AWS) have launched a new service EC2 container service (ECS) in several regions (without Singapo region currently). In short, It lets you manage docker containers running in EC2 instances.&lt;/p&gt;
 
 &lt;!--more--&gt;
 
-&lt;p&gt;If you are using &amp;quot;Amazon ECS sample&amp;quot; task definition to launch ECS service during the &amp;quot;get started&amp;quot; tutorail, AWS will use cloudformation template to launch all components needed.&lt;/p&gt;
+&lt;p&gt;If you are leveraging &amp;quot;Amazon ECS sample&amp;quot; task definition to create ECS service during the &amp;quot;get started&amp;quot; tutorail, AWS will use cloudformation template to launch all components needed.&lt;/p&gt;
 
 &lt;p&gt;Like AWS EC2 service, you are responsible to prepare the VPC(s), Security Group(s), IAM Role(s) and optional ELB(s) when you are planning to create a custom cluster.&lt;/p&gt;
 
@@ -28,27 +28,27 @@
 &lt;li&gt;&amp;quot;Task&amp;quot;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;It is used to define container settings. One task per one EC2 instance.&lt;/p&gt;
+&lt;p&gt;It is used to define container settings. One task per EC2 instance.&lt;/p&gt;
 
-&lt;p&gt;For instance, in order to run wordpress, I need to define three container settings in a task named &amp;quot;prod-wordpress&amp;quot;, one docker run nginx, another one run php5-fpm and the last one run a data volume. AWS ECS will start three docker containers in one EC2 instance after I run the task.&lt;/p&gt;
+&lt;p&gt;For example, in order to run wordpress, I need to define three container settings in a task named &amp;quot;prod-wordpress&amp;quot;, one docker to run nginx, another to run php5-fpm and the last to create a data volume. AWS ECS will start three docker containers in one EC2 instance after I run the task.&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&amp;quot;Service&amp;quot; &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;It is used to define which task to run, where to run it (in which ECS cluster) and how many tasks run. ELB can be used to load balance a sepecific port.&lt;/p&gt;
+&lt;p&gt;It is used to define which task to run, where to run it (in which ECS cluster) and how many tasks run. ELB can be used to load balance requests sent to a specific port.&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&amp;quot;Cluster&amp;quot;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;It is an EC2 instance pool. The container agent installed in the EC2 instance will register the EC2 instance to the cluster defined in it&amp;#39;s config.&lt;/p&gt;
+&lt;p&gt;It is an EC2 instance pool. The EC2 instances will auto join the cluster by it&amp;#39;s container agent.&lt;/p&gt;
 
 &lt;p&gt;For details, please refers to &lt;a href=&quot;http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html&quot;&gt;&amp;quot;Getting Started with Amazon ECS&amp;quot;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2&gt;Customization&lt;/h2&gt;
 
-&lt;p&gt;In order to launch my own &amp;quot;wordpress&amp;quot; project, I choose to create the infrastructure from scrach. Following as a summary (production and stagging environment in the same VPC), ensure high availability of wordpress by defining subnets accross multiple AZs:&lt;/p&gt;
+&lt;p&gt;In order to launch my own &amp;quot;wordpress&amp;quot; project, I choose to create the infrastructure from scrach. Following this a summary (it will ensures high availability of wordpress by defining subnets accross multiple AZs):&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span class=&quot;s&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;wordpress&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;s&quot;&gt;cidr&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.10.0.0/16&lt;/span&gt;
@@ -90,7 +90,7 @@
 
 &lt;p&gt;3) An ELB using subnets &amp;quot;wordpress-web1&amp;quot; and &amp;quot;wordpress-web2&amp;quot;, security group &amp;quot;prod-wordpress-elb&amp;quot;&lt;/p&gt;
 
-&lt;h2&gt;Luanch wordpress web service&lt;/h2&gt;
+&lt;h2&gt;Luanch wordpress service&lt;/h2&gt;
 
 &lt;p&gt;Using docker definition in my previous post.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
