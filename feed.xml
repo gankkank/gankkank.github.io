@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 08 May 2015 23:46:03 +0800</pubDate>
-    <lastBuildDate>Fri, 08 May 2015 23:46:03 +0800</lastBuildDate>
+    <pubDate>Thu, 11 Jun 2015 11:45:19 +0800</pubDate>
+    <lastBuildDate>Thu, 11 Jun 2015 11:45:19 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -20,7 +20,7 @@
 
 &lt;p&gt;Like AWS EC2 service, you are responsible to prepare the VPC(s), Security Group(s), IAM Role(s) and optional ELB(s) when you are planning to create a custom cluster.&lt;/p&gt;
 
-&lt;h2&gt;Definitions&lt;/h2&gt;
+&lt;h2 id=&quot;definitions&quot;&gt;Definitions&lt;/h2&gt;
 
 &lt;p&gt;There are several terms used by ECS:&lt;/p&gt;
 
@@ -46,7 +46,7 @@
 
 &lt;p&gt;For details, please refer to &lt;a href=&quot;http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html&quot;&gt;&amp;quot;Getting Started with Amazon ECS&amp;quot;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2&gt;Customization&lt;/h2&gt;
+&lt;h2 id=&quot;customization&quot;&gt;Customization&lt;/h2&gt;
 
 &lt;p&gt;In order to launch my own &amp;quot;wordpress&amp;quot; project, I choose to create the infrastructure from scrach. Following this a summary (it will ensures high availability of wordpress by defining subnets accross multiple AZs):&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span class=&quot;s&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
@@ -90,7 +90,7 @@
 
 &lt;p&gt;3) An ELB using subnets &amp;quot;wordpress-web1&amp;quot; and &amp;quot;wordpress-web2&amp;quot;, security group &amp;quot;prod-wordpress-elb&amp;quot;&lt;/p&gt;
 
-&lt;h2&gt;Luanch wordpress service&lt;/h2&gt;
+&lt;h2 id=&quot;luanch-wordpress-service&quot;&gt;Luanch wordpress service&lt;/h2&gt;
 
 &lt;p&gt;Using docker definition in my previous post.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
@@ -130,7 +130,7 @@ code:
 
 &lt;!--more--&gt;
 
-&lt;h2&gt;Start&lt;/h2&gt;
+&lt;h2 id=&quot;start&quot;&gt;Start&lt;/h2&gt;
 
 &lt;p&gt;Docker provides us with a &lt;a href=&quot;https://docs.docker.com/compose/wordpress/&quot;&gt;compose and wordpress&lt;/a&gt; page. But the docker image &lt;a href=&quot;https://registry.hub.docker.com/u/orchardup/php5/dockerfile/&quot;&gt;orchardup/php5&lt;/a&gt; is built from ubuntu 13.10 without php5-fpm package installed. OMG, you&amp;#39;d be kidding me. &lt;/p&gt;
 
@@ -142,7 +142,7 @@ Option 2: build configs within docker image
 
 &lt;p&gt;To simplify my task, I would choose &amp;quot;build configs within docker image&amp;quot; and share a volume contains php5-fpm socket file between the web container and the app container.&lt;/p&gt;
 
-&lt;h2&gt;Build docker image for web server&lt;/h2&gt;
+&lt;h2 id=&quot;build-docker-image-for-web-server&quot;&gt;Build docker image for web server&lt;/h2&gt;
 
 &lt;p&gt;Dockerfile:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;FROM ubuntu:14.04
@@ -172,7 +172,7 @@ CMD [&quot;nginx&quot;]
 
 &lt;p&gt;&lt;code&gt;docker build -f Dockerfile.nginx -t &amp;quot;gankkank/ubuntu-trusty-nginx:latest&amp;quot; .&lt;/code&gt;&lt;/p&gt;
 
-&lt;h2&gt;Build docker image for app server&lt;/h2&gt;
+&lt;h2 id=&quot;build-docker-image-for-app-server&quot;&gt;Build docker image for app server&lt;/h2&gt;
 
 &lt;p&gt;Dockerfile:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;FROM ubuntu:14.04
@@ -191,7 +191,7 @@ ENTRYPOINT /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.c
 
 &lt;p&gt;&lt;code&gt;docker build -f Dockerfile.php -t &amp;quot;gankkank/ubuntu-trusty-php5-fpm:latest&amp;quot; .&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;Some hacking: nginx&amp;#39;s default path is changed to /opt/site/apps and php5-fpm&amp;#39;s socket path is changed to /opt/site/sock/php5-fpm-www.sock&lt;/p&gt;
+&lt;p&gt;Some hacking: nginx&amp;#39;s default path is changed to /opt/site/apps and php5-fpm&amp;#39;s socket path is changed to /opt/site/sock/php5-fpm-&lt;a href=&quot;http://www.sock&quot;&gt;www.sock&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Start a web container and an app container:&lt;/p&gt;
 
@@ -201,7 +201,7 @@ ENTRYPOINT /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.c
 
 &lt;p&gt;Check the result by creating sample files at &lt;code&gt;/opt/site/apps&lt;/code&gt; directory. &lt;code&gt;&amp;lt;?php phpinfo(); ?&amp;gt;&lt;/code&gt; should return something. &lt;/p&gt;
 
-&lt;h2&gt;Docker compose&lt;/h2&gt;
+&lt;h2 id=&quot;docker-compose&quot;&gt;Docker compose&lt;/h2&gt;
 
 &lt;p&gt;Docker &lt;a href=&quot;https://docs.docker.com/compose/yml/&quot;&gt;compose&lt;/a&gt; is provided as an alternative to &lt;a href=&quot;https://www.vagrantup.com/&quot;&gt;Vagrant&lt;/a&gt;. It can start containers by defining them in a yaml file.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;web:
@@ -222,6 +222,8 @@ app:
   image: gankkank/ubuntu-trusty-nginx:latest
   ports:
     - &quot;8000:80&quot;
+  links:
+    - app
   volumes:
     - /opt/site:/opt/site
 app:
@@ -258,7 +260,7 @@ app:
 
 &lt;!--more--&gt;
 
-&lt;h2&gt;Jenkins&lt;/h2&gt;
+&lt;h2 id=&quot;jenkins&quot;&gt;Jenkins&lt;/h2&gt;
 
 &lt;p&gt;Jenkins provides us with an office docker image &lt;a href=&quot;https://registry.hub.docker.com/_/jenkins/&quot;&gt;jenkins:latest&lt;/a&gt; at Docker hub. You can find its git repository &lt;a href=&quot;https://github.com/jenkinsci/docker&quot;&gt;jenkinsci/docker&lt;/a&gt; at Github.&lt;/p&gt;
 
@@ -268,7 +270,7 @@ Start       : start jenkins with docker image with essential settings
 Deploy      : deploy the latest/needed plugins or configs I want
 Maintenance : backup/restore data
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;Get It Run&lt;/h3&gt;
+&lt;h3 id=&quot;get-it-run&quot;&gt;Get It Run&lt;/h3&gt;
 
 &lt;p&gt;I choose to use its offical image to save my time. After it started, I sadly discoverd that I cloud only get &lt;code&gt;jenkins&lt;/code&gt; user permission by running &lt;code&gt;docker exec&lt;/code&gt; command.
 &lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;1&lt;/sup&gt; &lt;a href=&quot;https://github.com/docker/docker/issues/8798&quot;&gt;#8798&lt;/a&gt; will add functions to login to a specific user in &lt;code&gt;docker exec&lt;/code&gt;&lt;/span&gt;
@@ -299,7 +301,7 @@ RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;address&amp;gt;&lt;/span&gt;Apache/2.2.14 (Ubuntu) Server at mirrors.jenkins-ci.org Port 80&lt;span class=&quot;nt&quot;&gt;&amp;lt;/address&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;Deploy&lt;/h3&gt;
+&lt;h3 id=&quot;deploy&quot;&gt;Deploy&lt;/h3&gt;
 
 &lt;p&gt;Since it&amp;#39;s not essential for me to prepare all plugins during the &amp;quot;Start&amp;quot; lifecycle, I will go with my approach.&lt;/p&gt;
 
@@ -343,7 +345,7 @@ docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -t jenkins2 &lt;span c
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Ok, That&amp;#39;s done and it seems no problem occured.&lt;/p&gt;
 
-&lt;h3&gt;Backup and Restore&lt;/h3&gt;
+&lt;h3 id=&quot;backup-and-restore&quot;&gt;Backup and Restore&lt;/h3&gt;
 
 &lt;p&gt;According to &lt;a href=&quot;https://docs.docker.com/userguide/dockervolumes/&quot;&gt;Docker volumns&lt;/a&gt; page, Docker suggests us to create a volumn instance and then launch another instance to use volumn from the previous one. This helps us to backup and restore data without getting our hands dirty with Docker host (avoid matching the host uid/gid to a container uid/gid, etc).
 &lt;sup class=&#39;sidenote-number&#39;&gt;4&lt;/sup&gt;&lt;span class=&#39;sidenote&#39;&gt;&lt;sup class=&#39;sidenote-number&#39;&gt;4&lt;/sup&gt; Blogs &lt;a href=&quot;http://alvinhenrick.com/2015/01/26/docker-backup-and-restore-volume-container/&quot;&gt;1&lt;/a&gt;, &lt;a href=&quot;https://medium.com/@ramangupta/why-docker-data-containers-are-good-589b3c6c749e&quot;&gt;2&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
@@ -369,7 +371,7 @@ docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 \
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;By default, the container&amp;#39;s file system persists after the container exits. So, you&amp;#39;d better run backup/restore with --rm option.&lt;/p&gt;
 
-&lt;h3&gt;Last&lt;/h3&gt;
+&lt;h3 id=&quot;last&quot;&gt;Last&lt;/h3&gt;
 
 &lt;p&gt;Finally, Docker&amp;#39;s way seems a quite different way from the traditional one. Hopefully it will help us get things done easier.&lt;/p&gt;
 </description>
@@ -398,7 +400,7 @@ docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 \
 
 &lt;!--more--&gt;
 
-&lt;h2&gt;Work with Docker Images&lt;/h2&gt;
+&lt;h2 id=&quot;work-with-docker-images&quot;&gt;Work with Docker Images&lt;/h2&gt;
 
 &lt;p&gt;Get start to &lt;a href=&quot;https://docs.docker.com/userguide/dockerimages/&quot;&gt;work with docker images&lt;/a&gt; by leveraging docker commands such as &lt;code&gt;docker pull&lt;/code&gt;, &lt;code&gt;docker build&lt;/code&gt;, &lt;code&gt;docker commit -m &amp;quot;comments&amp;quot; -a &amp;quot;author&amp;quot;&lt;/code&gt;, &lt;code&gt;docker push&lt;/code&gt;&lt;/p&gt;
 
@@ -408,7 +410,7 @@ docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 \
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# Dockerfile
 FROM ubuntu:14.04
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2&gt;My Workflow&lt;/h2&gt;
+&lt;h2 id=&quot;my-workflow&quot;&gt;My Workflow&lt;/h2&gt;
 
 &lt;p&gt;When working with something credential, we have to use servers to host our own services/data. We have a similiar workflow compared to the public approach.&lt;/p&gt;
 
@@ -438,7 +440,7 @@ FROM ubuntu:14.04
 &lt;li&gt;Docker registry server serve the builded docker images (if jenkins tests are successful).&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2&gt;Last&lt;/h2&gt;
+&lt;h2 id=&quot;last&quot;&gt;Last&lt;/h2&gt;
 
 &lt;p&gt;Docker&amp;#39;s registry service have been rewritten in golang - &lt;a href=&quot;https://docs.docker.com/registry/&quot;&gt;Docker Registry 2.0&lt;/a&gt; at &lt;a href=&quot;https://github.com/docker/distribution&quot;&gt;docker/distribution&lt;/a&gt; in Github. Hope it&amp;#39;s good for production environment.&lt;/p&gt;
 </description>
@@ -472,7 +474,7 @@ FROM ubuntu:14.04
 
 &lt;p&gt;Now, let&amp;#39;s come back to rsyslog.&lt;/p&gt;
 
-&lt;h3&gt;Run rsyslog&lt;/h3&gt;
+&lt;h3 id=&quot;run-rsyslog&quot;&gt;Run rsyslog&lt;/h3&gt;
 
 &lt;p&gt;A syslog daemon is necessary for many services include kernel itself. We will still use runit to indicate how to use syslog within docker instance.&lt;/p&gt;
 
@@ -560,7 +562,7 @@ runsvdir---runsv---rsyslogd-+-{in:imuxsock}
 
 &lt;p&gt;There is a good post from &lt;a href=&quot;http://www.sourcediver.org/blog/2014/11/17/using-runit-in-a-docker-container/&quot;&gt;sourcedirve.org&lt;/a&gt;, which shows us how to use Runit in Docker. And you can also check docker &lt;a href=&quot;https://phusion.github.io/baseimage-docker/&quot;&gt;phusion&lt;/a&gt; image.&lt;/p&gt;
 
-&lt;h2&gt;Install&lt;/h2&gt;
+&lt;h2 id=&quot;install&quot;&gt;Install&lt;/h2&gt;
 
 &lt;p&gt;To install docker is quite straightforward:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;wget -qO- https://get.docker.com/ | sh
@@ -575,7 +577,7 @@ docker run --rm -i -t debian /bin/bash
 
 &lt;p&gt;The officical doc about ssh can be found at &lt;a href=&quot;https://docs.docker.com/examples/running_ssh_service/&quot;&gt;running ssh service&lt;/a&gt;. Some settings in the document is essential to get the SSH service running in docker instance.&lt;/p&gt;
 
-&lt;h2&gt;Prepare Scripts&lt;/h2&gt;
+&lt;h2 id=&quot;prepare-scripts&quot;&gt;Prepare Scripts&lt;/h2&gt;
 
 &lt;p&gt;Runit run script to run ssh service, copy to &lt;strong&gt;/etc/service/sshd/run&lt;/strong&gt; &lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
@@ -587,7 +589,7 @@ docker run --rm -i -t debian /bin/bash
 &lt;span class=&quot;nb&quot;&gt;export&lt;/span&gt; &amp;gt; /etc/envvars
 &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; /usr/sbin/runsvdir-start
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2&gt;Build Image with runit&lt;/h2&gt;
+&lt;h2 id=&quot;build-image-with-runit&quot;&gt;Build Image with runit&lt;/h2&gt;
 
 &lt;p&gt;Make sure &amp;quot;./service/ssh/run&amp;quot; and &amp;quot;./runit_bootstrap&amp;quot; exist in local directory.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;#Dockerfile
@@ -672,7 +674,7 @@ docker attach &amp;lt;ID&amp;gt;
 
 &lt;p&gt;Let&amp;#39;s get started !&lt;/p&gt;
 
-&lt;h3&gt;Install&lt;/h3&gt;
+&lt;h3 id=&quot;install&quot;&gt;Install&lt;/h3&gt;
 
 &lt;p&gt;You can install either &lt;strong&gt;github-pages&lt;/strong&gt; gem or just &lt;strong&gt;jekyll&lt;/strong&gt; gem.&lt;/p&gt;
 
@@ -706,7 +708,7 @@ docker attach &amp;lt;ID&amp;gt;
 &lt;span class=&quot;c1&quot;&gt;# or&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pages&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;h3&gt;Configure&lt;/h3&gt;
+&lt;h3 id=&quot;configure&quot;&gt;Configure&lt;/h3&gt;
 
 &lt;p&gt;Jekyll supports markdown and liquid, so it&amp;#39;s good to learn some basic ideas about Github &lt;a href=&quot;https://help.github.com/articles/markdown-basics/&quot;&gt;Markdown&lt;/a&gt; pages and &lt;a href=&quot;https://github.com/Shopify/liquid/wiki&quot;&gt;Liquid&lt;/a&gt; wiki and also &lt;a href=&quot;http://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt;.&lt;/p&gt;
 
@@ -715,13 +717,13 @@ docker attach &amp;lt;ID&amp;gt;
 &lt;p&gt;It&amp;#39;s important to change &lt;code&gt;_config.yml&lt;/code&gt;. Add title, email, url, etc. In addition to some essential changes, I changed markdown to use &lt;strong&gt;redcarpet&lt;/strong&gt; rather than &lt;strong&gt;kramdown&lt;/strong&gt; to render markdown docs. kramdown is weired in some conditions such as when using &lt;strong&gt;```&lt;/strong&gt; for the block content.&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;  markdown: redcarpet
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;Write and Build&lt;/h3&gt;
+&lt;h3 id=&quot;write-and-build&quot;&gt;Write and Build&lt;/h3&gt;
 
 &lt;p&gt;Jekyll offers some handy commands to help preview your blog. &lt;code&gt;jekyll serve --watch&lt;/code&gt; will auto generate new pages by watching the files in directories.&lt;/p&gt;
 
 &lt;p&gt;Default &lt;code&gt;jekyll build&lt;/code&gt; will build your site at &lt;code&gt;_site&lt;/code&gt; directory. You can change to other directory. For me, I just removed the &lt;code&gt;_site&lt;/code&gt; directory and linked it to the directory &lt;code&gt;gankank.github.io&lt;/code&gt;. After build, I can cd the directory to push new contents to github.&lt;/p&gt;
 
-&lt;h3&gt;Deploy&lt;/h3&gt;
+&lt;h3 id=&quot;deploy&quot;&gt;Deploy&lt;/h3&gt;
 
 &lt;p&gt;I want to automate deploy steps when I decide to deploy new contents to github.&lt;/p&gt;
 
@@ -752,7 +754,7 @@ docker attach &amp;lt;ID&amp;gt;
     &lt;span class=&quot;sb&quot;&gt;`cd _site; git add . --all; git commit -m &quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:comment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;&quot;; git push`&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;h3&gt;Last&lt;/h3&gt;
+&lt;h3 id=&quot;last&quot;&gt;Last&lt;/h3&gt;
 
 &lt;p&gt;Since I&amp;#39;m a beginner to jekyll, follow &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; will be essential. Hope it&amp;#39;s a pleasant experience to write with jekyll !! &lt;/p&gt;
 </description>

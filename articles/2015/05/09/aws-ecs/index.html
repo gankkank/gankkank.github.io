@@ -19,6 +19,10 @@
   
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
+  <!--
+  <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js" }}"></script>
+  <script type="text/javascript" src="/assets/js/toc.js" }}"></script>
+  -->
 
   <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/09/aws-ecs">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
@@ -57,7 +61,7 @@
 
 <p>Like AWS EC2 service, you are responsible to prepare the VPC(s), Security Group(s), IAM Role(s) and optional ELB(s) when you are planning to create a custom cluster.</p>
 
-<h2>Definitions</h2>
+<h2 id="definitions">Definitions</h2>
 
 <p>There are several terms used by ECS:</p>
 
@@ -83,7 +87,7 @@
 
 <p>For details, please refer to <a href="http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_GetStarted.html">&quot;Getting Started with Amazon ECS&quot;</a></p>
 
-<h2>Customization</h2>
+<h2 id="customization">Customization</h2>
 
 <p>In order to launch my own &quot;wordpress&quot; project, I choose to create the infrastructure from scrach. Following this a summary (it will ensures high availability of wordpress by defining subnets accross multiple AZs):</p>
 <div class="highlight"><pre><code class="language-yml" data-lang="yml"><span class="s">vpc</span><span class="pi">:</span>
@@ -127,7 +131,7 @@
 
 <p>3) An ELB using subnets &quot;wordpress-web1&quot; and &quot;wordpress-web2&quot;, security group &quot;prod-wordpress-elb&quot;</p>
 
-<h2>Luanch wordpress service</h2>
+<h2 id="luanch-wordpress-service">Luanch wordpress service</h2>
 
 <p>Using docker definition in my previous post.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">web:
@@ -216,6 +220,7 @@ clicky_site_ids.push(100842226);
 })();
 </script>
 <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+
 </footer>
 
   </body>

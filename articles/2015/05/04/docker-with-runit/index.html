@@ -19,6 +19,10 @@
   
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
+  <!--
+  <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js" }}"></script>
+  <script type="text/javascript" src="/assets/js/toc.js" }}"></script>
+  -->
 
   <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/04/docker-with-runit">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
@@ -63,7 +67,7 @@
 
 <p>There is a good post from <a href="http://www.sourcediver.org/blog/2014/11/17/using-runit-in-a-docker-container/">sourcedirve.org</a>, which shows us how to use Runit in Docker. And you can also check docker <a href="https://phusion.github.io/baseimage-docker/">phusion</a> image.</p>
 
-<h2>Install</h2>
+<h2 id="install">Install</h2>
 
 <p>To install docker is quite straightforward:</p>
 <div class="highlight"><pre><code class="language-" data-lang="">wget -qO- https://get.docker.com/ | sh
@@ -78,7 +82,7 @@ docker run --rm -i -t debian /bin/bash
 
 <p>The officical doc about ssh can be found at <a href="https://docs.docker.com/examples/running_ssh_service/">running ssh service</a>. Some settings in the document is essential to get the SSH service running in docker instance.</p>
 
-<h2>Prepare Scripts</h2>
+<h2 id="prepare-scripts">Prepare Scripts</h2>
 
 <p>Runit run script to run ssh service, copy to <strong>/etc/service/sshd/run</strong> </p>
 <div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
@@ -90,7 +94,7 @@ docker run --rm -i -t debian /bin/bash
 <span class="nb">export</span> &gt; /etc/envvars
 <span class="nb">exec</span> /usr/sbin/runsvdir-start
 </code></pre></div>
-<h2>Build Image with runit</h2>
+<h2 id="build-image-with-runit">Build Image with runit</h2>
 
 <p>Make sure &quot;./service/ssh/run&quot; and &quot;./runit_bootstrap&quot; exist in local directory.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">#Dockerfile
@@ -220,6 +224,7 @@ clicky_site_ids.push(100842226);
 })();
 </script>
 <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+
 </footer>
 
   </body>

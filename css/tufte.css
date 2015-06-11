@@ -179,22 +179,22 @@ html {
     display: none; } }
 @media screen and (min-width: 800px) {
   html {
-    font-size: 12px; } }
+    font-size: 11px; } }
 @media screen and (min-width: 900px) {
   html {
-    font-size: 13px; } }
+    font-size: 12px; } }
 @media screen and (min-width: 1000px) {
   html {
-    font-size: 14px; } }
+    font-size: 13px; } }
 @media screen and (min-width: 1100px) {
   html {
-    font-size: 15px; } }
+    font-size: 14px; } }
 @media screen and (min-width: 1200px) {
   html {
-    font-size: 16px; } }
+    font-size: 15px; } }
 @media screen and (min-width: 1300px) {
   html {
-    font-size: 17px; } }
+    font-size: 16px; } }
 body {
   width: 87.5%;
   margin-left: auto;
@@ -273,6 +273,17 @@ hr.slender {
   background-image: -moz-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent);
   background-image: -ms-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent);
   background-image: -o-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent); }
+
+hr {
+  border: 0;
+  height: 1px;
+  width: 87.5%;
+  margin-bottom: 2.8rem;
+  background-image: -webkit-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent);
+  background-image: -moz-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent);
+  background-image: -ms-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent);
+  background-image: -o-linear-gradient(left, transparent, rgba(0, 0, 0, 0.75), transparent); }
+
 
 li.listing hr {
   width: 100%; }

@@ -19,6 +19,10 @@
   
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
+  <!--
+  <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js" }}"></script>
+  <script type="text/javascript" src="/assets/js/toc.js" }}"></script>
+  -->
 
   <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/08/docker-workflow-php-app">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
@@ -57,7 +61,7 @@
 
 <!--more-->
 
-<h2>Start</h2>
+<h2 id="start">Start</h2>
 
 <p>Docker provides us with a <a href="https://docs.docker.com/compose/wordpress/">compose and wordpress</a> page. But the docker image <a href="https://registry.hub.docker.com/u/orchardup/php5/dockerfile/">orchardup/php5</a> is built from ubuntu 13.10 without php5-fpm package installed. OMG, you&#39;d be kidding me. </p>
 
@@ -69,7 +73,7 @@ Option 2: build configs within docker image
 
 <p>To simplify my task, I would choose &quot;build configs within docker image&quot; and share a volume contains php5-fpm socket file between the web container and the app container.</p>
 
-<h2>Build docker image for web server</h2>
+<h2 id="build-docker-image-for-web-server">Build docker image for web server</h2>
 
 <p>Dockerfile:</p>
 <div class="highlight"><pre><code class="language-" data-lang="">FROM ubuntu:14.04
@@ -99,7 +103,7 @@ CMD ["nginx"]
 
 <p><code>docker build -f Dockerfile.nginx -t &quot;gankkank/ubuntu-trusty-nginx:latest&quot; .</code></p>
 
-<h2>Build docker image for app server</h2>
+<h2 id="build-docker-image-for-app-server">Build docker image for app server</h2>
 
 <p>Dockerfile:</p>
 <div class="highlight"><pre><code class="language-" data-lang="">FROM ubuntu:14.04
@@ -118,7 +122,7 @@ ENTRYPOINT /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.c
 
 <p><code>docker build -f Dockerfile.php -t &quot;gankkank/ubuntu-trusty-php5-fpm:latest&quot; .</code></p>
 
-<p>Some hacking: nginx&#39;s default path is changed to /opt/site/apps and php5-fpm&#39;s socket path is changed to /opt/site/sock/php5-fpm-www.sock</p>
+<p>Some hacking: nginx&#39;s default path is changed to /opt/site/apps and php5-fpm&#39;s socket path is changed to /opt/site/sock/php5-fpm-<a href="http://www.sock">www.sock</a></p>
 
 <p>Start a web container and an app container:</p>
 
@@ -128,7 +132,7 @@ ENTRYPOINT /usr/sbin/php5-fpm --nodaemonize --fpm-config /etc/php5/fpm/php-fpm.c
 
 <p>Check the result by creating sample files at <code>/opt/site/apps</code> directory. <code>&lt;?php phpinfo(); ?&gt;</code> should return something. </p>
 
-<h2>Docker compose</h2>
+<h2 id="docker-compose">Docker compose</h2>
 
 <p>Docker <a href="https://docs.docker.com/compose/yml/">compose</a> is provided as an alternative to <a href="https://www.vagrantup.com/">Vagrant</a>. It can start containers by defining them in a yaml file.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">web:
@@ -149,6 +153,8 @@ app:
   image: gankkank/ubuntu-trusty-nginx:latest
   ports:
     - "8000:80"
+  links:
+    - app
   volumes:
     - /opt/site:/opt/site
 app:
@@ -230,6 +236,7 @@ clicky_site_ids.push(100842226);
 })();
 </script>
 <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+
 </footer>
 
   </body>

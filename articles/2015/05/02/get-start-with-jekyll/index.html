@@ -19,6 +19,10 @@
   
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
+  <!--
+  <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js" }}"></script>
+  <script type="text/javascript" src="/assets/js/toc.js" }}"></script>
+  -->
 
   <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/02/get-start-with-jekyll">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
@@ -55,7 +59,7 @@
 
 <p>Let&#39;s get started !</p>
 
-<h3>Install</h3>
+<h3 id="install">Install</h3>
 
 <p>You can install either <strong>github-pages</strong> gem or just <strong>jekyll</strong> gem.</p>
 
@@ -89,7 +93,7 @@
 <span class="c1"># or</span>
 <span class="n">gem</span> <span class="n">install</span> <span class="n">github</span><span class="o">-</span><span class="n">pages</span></code></pre></div>
 
-<h3>Configure</h3>
+<h3 id="configure">Configure</h3>
 
 <p>Jekyll supports markdown and liquid, so it&#39;s good to learn some basic ideas about Github <a href="https://help.github.com/articles/markdown-basics/">Markdown</a> pages and <a href="https://github.com/Shopify/liquid/wiki">Liquid</a> wiki and also <a href="http://jekyllrb.com/">Jekyll</a>.</p>
 
@@ -98,13 +102,13 @@
 <p>It&#39;s important to change <code>_config.yml</code>. Add title, email, url, etc. In addition to some essential changes, I changed markdown to use <strong>redcarpet</strong> rather than <strong>kramdown</strong> to render markdown docs. kramdown is weired in some conditions such as when using <strong>```</strong> for the block content.</p>
 <div class="highlight"><pre><code class="language-" data-lang="">  markdown: redcarpet
 </code></pre></div>
-<h3>Write and Build</h3>
+<h3 id="write-and-build">Write and Build</h3>
 
 <p>Jekyll offers some handy commands to help preview your blog. <code>jekyll serve --watch</code> will auto generate new pages by watching the files in directories.</p>
 
 <p>Default <code>jekyll build</code> will build your site at <code>_site</code> directory. You can change to other directory. For me, I just removed the <code>_site</code> directory and linked it to the directory <code>gankank.github.io</code>. After build, I can cd the directory to push new contents to github.</p>
 
-<h3>Deploy</h3>
+<h3 id="deploy">Deploy</h3>
 
 <p>I want to automate deploy steps when I decide to deploy new contents to github.</p>
 
@@ -135,7 +139,7 @@
     <span class="sb">`cd _site; git add . --all; git commit -m "</span><span class="si">#{</span><span class="n">args</span><span class="p">[</span><span class="ss">:comment</span><span class="p">]</span><span class="si">}</span><span class="sb">"; git push`</span>
 <span class="k">end</span></code></pre></div>
 
-<h3>Last</h3>
+<h3 id="last">Last</h3>
 
 <p>Since I&#39;m a beginner to jekyll, follow <a href="http://jekyllrb.com">Jekyll docs</a> will be essential. Hope it&#39;s a pleasant experience to write with jekyll !! </p>
 
@@ -211,6 +215,7 @@ clicky_site_ids.push(100842226);
 })();
 </script>
 <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+
 </footer>
 
   </body>

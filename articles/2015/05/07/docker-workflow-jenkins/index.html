@@ -19,6 +19,10 @@
   
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
+  <!--
+  <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js" }}"></script>
+  <script type="text/javascript" src="/assets/js/toc.js" }}"></script>
+  -->
 
   <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/07/docker-workflow-jenkins">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
@@ -55,7 +59,7 @@
 
 <!--more-->
 
-<h2>Jenkins</h2>
+<h2 id="jenkins">Jenkins</h2>
 
 <p>Jenkins provides us with an office docker image <a href="https://registry.hub.docker.com/_/jenkins/">jenkins:latest</a> at Docker hub. You can find its git repository <a href="https://github.com/jenkinsci/docker">jenkinsci/docker</a> at Github.</p>
 
@@ -65,7 +69,7 @@ Start       : start jenkins with docker image with essential settings
 Deploy      : deploy the latest/needed plugins or configs I want
 Maintenance : backup/restore data
 </code></pre></div>
-<h3>Get It Run</h3>
+<h3 id="get-it-run">Get It Run</h3>
 
 <p>I choose to use its offical image to save my time. After it started, I sadly discoverd that I cloud only get <code>jenkins</code> user permission by running <code>docker exec</code> command.
 <sup class='sidenote-number'>1</sup><span class='sidenote'><sup class='sidenote-number'>1</sup> <a href="https://github.com/docker/docker/issues/8798">#8798</a> will add functions to login to a specific user in <code>docker exec</code></span>
@@ -96,7 +100,7 @@ RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
 <span class="nt">&lt;address&gt;</span>Apache/2.2.14 (Ubuntu) Server at mirrors.jenkins-ci.org Port 80<span class="nt">&lt;/address&gt;</span>
 <span class="nt">&lt;/body&gt;&lt;/html&gt;</span>
 </code></pre></div>
-<h3>Deploy</h3>
+<h3 id="deploy">Deploy</h3>
 
 <p>Since it&#39;s not essential for me to prepare all plugins during the &quot;Start&quot; lifecycle, I will go with my approach.</p>
 
@@ -140,7 +144,7 @@ docker <span class="nb">exec</span> -t jenkins2 <span class="se">\</span>
 </code></pre></div>
 <p>Ok, That&#39;s done and it seems no problem occured.</p>
 
-<h3>Backup and Restore</h3>
+<h3 id="backup-and-restore">Backup and Restore</h3>
 
 <p>According to <a href="https://docs.docker.com/userguide/dockervolumes/">Docker volumns</a> page, Docker suggests us to create a volumn instance and then launch another instance to use volumn from the previous one. This helps us to backup and restore data without getting our hands dirty with Docker host (avoid matching the host uid/gid to a container uid/gid, etc).
 <sup class='sidenote-number'>4</sup><span class='sidenote'><sup class='sidenote-number'>4</sup> Blogs <a href="http://alvinhenrick.com/2015/01/26/docker-backup-and-restore-volume-container/">1</a>, <a href="https://medium.com/@ramangupta/why-docker-data-containers-are-good-589b3c6c749e">2</a></span></p>
@@ -166,7 +170,7 @@ docker run --volumes-from jenkins_home_b -v $(pwd):/backup ubuntu:14.04 \
 </code></pre></div>
 <p>By default, the container&#39;s file system persists after the container exits. So, you&#39;d better run backup/restore with --rm option.</p>
 
-<h3>Last</h3>
+<h3 id="last">Last</h3>
 
 <p>Finally, Docker&#39;s way seems a quite different way from the traditional one. Hopefully it will help us get things done easier.</p>
 
@@ -242,6 +246,7 @@ clicky_site_ids.push(100842226);
 })();
 </script>
 <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+
 </footer>
 
   </body>

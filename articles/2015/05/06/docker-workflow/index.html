@@ -19,6 +19,10 @@
   
   <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
+  <!--
+  <script type="text/javascript" src="/assets/js/jquery-2.1.4.min.js" }}"></script>
+  <script type="text/javascript" src="/assets/js/toc.js" }}"></script>
+  -->
 
   <link rel="canonical" href="https://gankkank.github.io/articles/2015/05/06/docker-workflow">
   <link rel="alternate" type="application/rss+xml" title="GANKKANK" href="https://gankkank.github.io/feed.xml" />
@@ -55,7 +59,7 @@
 
 <!--more-->
 
-<h2>Work with Docker Images</h2>
+<h2 id="work-with-docker-images">Work with Docker Images</h2>
 
 <p>Get start to <a href="https://docs.docker.com/userguide/dockerimages/">work with docker images</a> by leveraging docker commands such as <code>docker pull</code>, <code>docker build</code>, <code>docker commit -m &quot;comments&quot; -a &quot;author&quot;</code>, <code>docker push</code></p>
 
@@ -65,7 +69,7 @@
 <div class="highlight"><pre><code class="language-" data-lang=""># Dockerfile
 FROM ubuntu:14.04
 </code></pre></div>
-<h2>My Workflow</h2>
+<h2 id="my-workflow">My Workflow</h2>
 
 <p>When working with something credential, we have to use servers to host our own services/data. We have a similiar workflow compared to the public approach.</p>
 
@@ -95,7 +99,7 @@ FROM ubuntu:14.04
 <li>Docker registry server serve the builded docker images (if jenkins tests are successful).</li>
 </ol>
 
-<h2>Last</h2>
+<h2 id="last">Last</h2>
 
 <p>Docker&#39;s registry service have been rewritten in golang - <a href="https://docs.docker.com/registry/">Docker Registry 2.0</a> at <a href="https://github.com/docker/distribution">docker/distribution</a> in Github. Hope it&#39;s good for production environment.</p>
 
@@ -171,6 +175,7 @@ clicky_site_ids.push(100842226);
 })();
 </script>
 <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100842226ns.gif" /></p></noscript>
+
 </footer>
 
   </body>
