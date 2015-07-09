@@ -200,7 +200,8 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding-left: 8.4%;
-  font-family: ETBembo, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+  /*font-family: ETBembo, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;*/
+  font-family: Merriweather, "PT Serif", Georgia, "Times New Roman", serif, sans-serif;
   padding-bottom: 400px;
   background-color: #fffff8;
   color: #111;

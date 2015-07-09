@@ -8,6 +8,9 @@
   <title>Docker with Runit, Part 1: SSH</title>
   <meta name="description" content="Though run only one process per container is listed in dockerfile best practice, it&#39;s maybe essentail to run multiple processes for preview purpose or in...">
 
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 
   <link rel="stylesheet" href="/css/tufte.css">	
   
@@ -70,12 +73,12 @@
 <h2 id="install">Install</h2>
 
 <p>To install docker is quite straightforward:</p>
-<div class="highlight"><pre><code class="language-" data-lang="">wget -qO- https://get.docker.com/ | sh
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">wget -qO- https://get.docker.com/ | sh
 </code></pre></div>
 <p>Then, To interactive with docker instance:</p>
-<div class="highlight"><pre><code class="language-" data-lang="">docker run -i -t debian /bin/bash
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">docker run -i -t debian /bin/bash
 
-# run with --rm to clean up the container after it exit
+<span class="c"># run with --rm to clean up the container after it exit</span>
 docker run --rm -i -t debian /bin/bash
 </code></pre></div>
 <p>The docker instance will exit after you hit the <code>exit</code> command. Docker also have commands to run a process as daemon but we will discuss how to use runit to launch ssh process. </p>
@@ -85,12 +88,12 @@ docker run --rm -i -t debian /bin/bash
 <h2 id="prepare-scripts">Prepare Scripts</h2>
 
 <p>Runit run script to run ssh service, copy to <strong>/etc/service/sshd/run</strong> </p>
-<div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="c">#!/bin/bash</span>
 <span class="nb">exec </span>2&gt;&amp;1
 <span class="nb">exec</span> /usr/sbin/sshd -D -e
 </code></pre></div>
 <p>Script to start runit, copy to <strong>/usr/sbin/runsvdir-start</strong></p>
-<div class="highlight"><pre><code class="language-" data-lang=""><span class="c">#!/bin/bash</span>
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="c">#!/bin/bash</span>
 <span class="nb">export</span> &gt; /etc/envvars
 <span class="nb">exec</span> /usr/sbin/runsvdir-start
 </code></pre></div>
@@ -128,20 +131,20 @@ EXPOSE 22
 ENTRYPOINT ["/usr/sbin/runit_bootstrap"]
 </code></pre></div>
 <p>After all files are ready, we can start to build the images. You can use the following commands to tag image, start docker instance, and login to docker, etc.</p>
-<div class="highlight"><pre><code class="language-" data-lang=""># start to build
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="c"># start to build</span>
 docker build .
-# find ID of new build image
+<span class="c"># find ID of new build image</span>
 docker images
-# tag the image
+<span class="c"># tag the image</span>
 docker tag 27bc398e8222 debian-runit:0.1
 
-#An ENTRYPOINT allows you to configure a container that will run as an executable.
-#So to run the image (-d deamon):
+<span class="c">#An ENTRYPOINT allows you to configure a container that will run as an executable.</span>
+<span class="c">#So to run the image (-d deamon):</span>
 docker run -d -P -t debian-runit:0.1
 
-# login to docker container
-docker exec -i -t &lt;ID&gt; bash
-# or:
+<span class="c"># login to docker container</span>
+docker <span class="nb">exec</span> -i -t &lt;ID&gt; bash
+<span class="c"># or:</span>
 docker attach &lt;ID&gt;
 </code></pre></div>
 <p>After you launch the docker instance you build, your can use ssh to login. Root password should be the one in Dockerfile.</p>

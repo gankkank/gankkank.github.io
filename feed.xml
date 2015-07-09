@@ -6,8 +6,8 @@
 </description>
     <link>https://gankkank.github.io/</link>
     <atom:link href="https://gankkank.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 11 Jun 2015 11:45:57 +0800</pubDate>
-    <lastBuildDate>Thu, 11 Jun 2015 11:45:57 +0800</lastBuildDate>
+    <pubDate>Thu, 09 Jul 2015 10:34:12 +0800</pubDate>
+    <lastBuildDate>Thu, 09 Jul 2015 10:34:12 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -565,12 +565,12 @@ runsvdir---runsv---rsyslogd-+-{in:imuxsock}
 &lt;h2 id=&quot;install&quot;&gt;Install&lt;/h2&gt;
 
 &lt;p&gt;To install docker is quite straightforward:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;wget -qO- https://get.docker.com/ | sh
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;wget -qO- https://get.docker.com/ | sh
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then, To interactive with docker instance:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;docker run -i -t debian /bin/bash
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;docker run -i -t debian /bin/bash
 
-# run with --rm to clean up the container after it exit
+&lt;span class=&quot;c&quot;&gt;# run with --rm to clean up the container after it exit&lt;/span&gt;
 docker run --rm -i -t debian /bin/bash
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The docker instance will exit after you hit the &lt;code&gt;exit&lt;/code&gt; command. Docker also have commands to run a process as daemon but we will discuss how to use runit to launch ssh process. &lt;/p&gt;
@@ -580,12 +580,12 @@ docker run --rm -i -t debian /bin/bash
 &lt;h2 id=&quot;prepare-scripts&quot;&gt;Prepare Scripts&lt;/h2&gt;
 
 &lt;p&gt;Runit run script to run ssh service, copy to &lt;strong&gt;/etc/service/sshd/run&lt;/strong&gt; &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;2&amp;gt;&amp;amp;1
 &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; /usr/sbin/sshd -D -e
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Script to start runit, copy to &lt;strong&gt;/usr/sbin/runsvdir-start&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;export&lt;/span&gt; &amp;gt; /etc/envvars
 &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; /usr/sbin/runsvdir-start
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -623,20 +623,20 @@ EXPOSE 22
 ENTRYPOINT [&quot;/usr/sbin/runit_bootstrap&quot;]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;After all files are ready, we can start to build the images. You can use the following commands to tag image, start docker instance, and login to docker, etc.&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-&quot; data-lang=&quot;&quot;&gt;# start to build
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;c&quot;&gt;# start to build&lt;/span&gt;
 docker build .
-# find ID of new build image
+&lt;span class=&quot;c&quot;&gt;# find ID of new build image&lt;/span&gt;
 docker images
-# tag the image
+&lt;span class=&quot;c&quot;&gt;# tag the image&lt;/span&gt;
 docker tag 27bc398e8222 debian-runit:0.1
 
-#An ENTRYPOINT allows you to configure a container that will run as an executable.
-#So to run the image (-d deamon):
+&lt;span class=&quot;c&quot;&gt;#An ENTRYPOINT allows you to configure a container that will run as an executable.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#So to run the image (-d deamon):&lt;/span&gt;
 docker run -d -P -t debian-runit:0.1
 
-# login to docker container
-docker exec -i -t &amp;lt;ID&amp;gt; bash
-# or:
+&lt;span class=&quot;c&quot;&gt;# login to docker container&lt;/span&gt;
+docker &lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; -i -t &amp;lt;ID&amp;gt; bash
+&lt;span class=&quot;c&quot;&gt;# or:&lt;/span&gt;
 docker attach &amp;lt;ID&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;After you launch the docker instance you build, your can use ssh to login. Root password should be the one in Dockerfile.&lt;/p&gt;
